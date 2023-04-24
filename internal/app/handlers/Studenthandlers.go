@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"student-service/internal/app/model"
-	"student-service/internal/app/usecase"
+	"students-service/internal/app/model"
+	"students-service/internal/app/usecase"
 
 	"github.com/gin-gonic/gin"
 )

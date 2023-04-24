@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"student-service/internal/app/model"
+	"students-service/internal/app/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

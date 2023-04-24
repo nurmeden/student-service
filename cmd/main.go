@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	handler "student-service/internal/app/handlers"
-	"student-service/internal/app/repository"
-	"student-service/internal/app/usecase"
-	"student-service/internal/database"
+	handler "students-service/internal/app/handlers"
+	"students-service/internal/app/repository"
+	"students-service/internal/app/usecase"
+	"students-service/internal/database"
 
 	"github.com/gin-gonic/gin"
 )

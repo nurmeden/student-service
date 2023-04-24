@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"student-service/internal/app/model"
-	"student-service/internal/app/repository"
+	"students-service/internal/app/model"
+	"students-service/internal/app/repository"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"

@@ -1,4 +1,4 @@
-module student-service
+module students-service
 
 go 1.20
 
