@@ -21,14 +21,12 @@ func NewStudentRepository(client *mongo.Client, dbName string, collectionName st
 		client: client,
 	}
 
-	// Получение коллекции студентов
 	collection := client.Database(dbName).Collection(collectionName)
 	r.collection = collection
 
 	return r, nil
 }
 
-// Create - создание нового студента
 func (r *StudentRepository) Create(ctx context.Context, student *model.Student) (*model.Student, error) {
 	err := r.client.Ping(ctx, nil)
 	if err != nil {
@@ -43,7 +41,6 @@ func (r *StudentRepository) Create(ctx context.Context, student *model.Student) 
 	return student, nil
 }
 
-// Read - чтение информации о студенте по ID
 func (r *StudentRepository) Read(ctx context.Context, id string) (*model.Student, error) {
 	var student model.Student
 	studentId, err := primitive.ObjectIDFromHex(id)
@@ -75,7 +72,6 @@ func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string
 	return &student, nil
 }
 
-// Update - обновление информации о студенте
 func (r *StudentRepository) Update(ctx context.Context, student *model.Student) (*model.Student, error) {
 	filter := bson.M{"_id": student.ID}
 	update := bson.M{"$set": bson.M{

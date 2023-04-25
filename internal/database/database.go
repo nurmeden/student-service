@@ -10,7 +10,7 @@ import (
 )
 
 func SetupDatabase() *mongo.Client {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://taskdb:27017"))
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		fmt.Printf("Failed to connect to MongoDB: %v", err)
 		return nil

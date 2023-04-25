@@ -6,7 +6,7 @@ networks:
 
 
 services:
-  taskdb:
+  studentsdb:
     image: mongo:latest
     restart: always
     networks:

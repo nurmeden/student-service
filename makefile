@@ -1,25 +1,19 @@
-# Переменные
-APP_NAME := app
-DOCKER_IMAGE := student-service
-DOCKER_TAG := latest
+APP_NAME=app
+DOCKER_TAG=latest
 
-# Компиляция и сборка приложения
+.PHONY: build docker clean run-mongo
+
 build:
-	go build -o app cmd/main.go
+	go build -o app .
 
-# Запуск приложения
+docker:
+	docker build -t app:latest .
+
+clean:
+	rm -f app
+
+run-mongo:
+	docker run -p 27017:27017 -d --rm mongo:latest
+
 run:
-	docker-compose up --build
-
-build:
-	GO111MODULE="on" CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app ./cmd
-
-# # Остановка и удаление Docker-контейнера
-# docker-stop:
-# 	docker stop $(APP_NAME)
-# 	docker rm $(APP_NAME)
-
-# # Очистка бинарных файлов и Docker-образов
-# clean:
-# 	rm -f $(APP_NAME)
-# 	docker rmi $(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker run -p 8080:8080 -d --rm app
