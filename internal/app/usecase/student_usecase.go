@@ -59,25 +59,20 @@ func (u *studentUsecase) DeleteStudent(ctx context.Context, id string) error {
 }
 
 func (u *studentUsecase) SignIn(signInData *model.SignInData) (*model.AuthToken, error) {
-	// Проверяем данные аутентификации, например, сравниваем с данными в базе данных
-	// и проводим другие необходимые проверки
-	// Если аутентификация успешна, генерируем токен аутентификации
 
-	// Пример генерации токена JWT с использованием библиотеки github.com/dgrijalva/jwt-go
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["userID"] = signInData.UserID
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()              // Устанавливаем время жизни токена
-	tokenString, err := token.SignedString([]byte("your-secret-key")) // Здесь указываем ваш секретный ключ
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+	tokenString, err := token.SignedString([]byte("your-secret-key"))
 	if err != nil {
 		return nil, err
 	}
 
-	// Возвращаем сгенерированный токен аутентификации
 	authToken := &model.AuthToken{
 		UserID:    signInData.UserID,
 		Token:     tokenString,
-		ExpiresAt: time.Now().Add(time.Hour * 1), // Устанавливаем время истечения токена
+		ExpiresAt: time.Now().Add(time.Hour * 1),
 	}
 	return authToken, nil
 }
