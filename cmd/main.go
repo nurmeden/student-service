@@ -38,9 +38,5 @@ func main() {
 			auth.POST("/sign-in", studentHandler.SignIn)
 		}
 	}
-	// router.PUT("/students/:id", studentHandler.UpdateStudent)
-	// router.DELETE("/students/:id", studentHandler.DeleteStudent)
-
-	// Запуск HTTP-сервера
 	router.Run(":8000")
 }

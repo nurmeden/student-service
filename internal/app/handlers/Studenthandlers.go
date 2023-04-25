@@ -14,8 +14,7 @@ import (
 
 type StudentHandler struct {
 	studentUsecase usecase.StudentUsecase
-
-	// logger         logger.Logger
+	//logger         logger.Logger
 }
 
 // func NewStudentHandler(studentUsecase usecase.StudentUsecase, logger logger.Logger) *StudentHandler {
