@@ -3,17 +3,18 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"students-service/internal/app/model"
-	"students-service/internal/app/repository"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/nurmeden/students-service/internal/app/model"
+	"github.com/nurmeden/students-service/internal/app/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type StudentUsecase interface {
 	CreateStudent(ctx context.Context, student *model.Student) (*model.Student, error)
 	GetStudentByID(ctx context.Context, id string) (*model.Student, error)
+	GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error)
 	UpdateStudent(ctx context.Context, student *model.Student) (*model.Student, error)
 	DeleteStudent(ctx context.Context, id string) error
 	SignIn(signInData *model.SignInData) (*model.AuthToken, error)
@@ -43,6 +44,10 @@ func (u *studentUsecase) CreateStudent(ctx context.Context, student *model.Stude
 
 func (u *studentUsecase) GetStudentByID(ctx context.Context, id string) (*model.Student, error) {
 	return u.studentRepo.Read(ctx, id)
+}
+
+func (u *studentUsecase) GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error) {
+	return u.studentRepo.GetStudentByCoursesID(ctx, id)
 }
 
 func (u *studentUsecase) UpdateStudent(ctx context.Context, student *model.Student) (*model.Student, error) {

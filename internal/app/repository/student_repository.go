@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"students-service/internal/app/model"
 
+	"github.com/nurmeden/students-service/internal/app/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -52,6 +52,20 @@ func (r *StudentRepository) Read(ctx context.Context, id string) (*model.Student
 	}
 	filter := bson.M{"_id": studentId}
 	err = r.collection.FindOne(ctx, filter).Decode(&student)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil // Если студент не найден, возвращаем nil и ошибку nil
+		}
+		return nil, fmt.Errorf("failed to read student: %v", err)
+	}
+	return &student, nil
+}
+
+func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error) {
+	var student model.Student
+
+	filter := bson.M{"courses": id}
+	err := r.collection.FindOne(ctx, filter).Decode(&student)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil // Если студент не найден, возвращаем nil и ошибку nil

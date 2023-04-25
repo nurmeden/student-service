@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	handler "students-service/internal/app/handlers"
-	"students-service/internal/app/repository"
-	"students-service/internal/app/usecase"
-	"students-service/internal/database"
 
 	"github.com/gin-gonic/gin"
+	handler "github.com/nurmeden/students-service/internal/app/handlers"
+	"github.com/nurmeden/students-service/internal/app/repository"
+	"github.com/nurmeden/students-service/internal/app/usecase"
+	"github.com/nurmeden/students-service/internal/database"
 )
 
 func main() {
@@ -30,6 +30,8 @@ func main() {
 	{
 		api.POST("/students", studentHandler.CreateStudent)
 		api.GET("/students/:id", studentHandler.GetStudentByID)
+		api.GET("/students/:id/courses", studentHandler.GetStudentCourses)
+		api.GET("/students/:id/students", studentHandler.GetStudentByCoursesID)
 		auth := api.Group("/auth/")
 		{
 			auth.POST("/sign-up", studentHandler.CreateStudent)

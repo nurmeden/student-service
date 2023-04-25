@@ -39,3 +39,14 @@ type StudentUpdateInput struct {
 	Password  string   `json:"password"`
 	Courses   []string `json:"courses"`
 }
+
+type Course struct {
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Students    []string `json:"students"`
+}
+
+type CourseResponse struct {
+	CourseData Course `json:"data"`
+}

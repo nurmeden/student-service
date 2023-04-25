@@ -2,17 +2,19 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"students-service/internal/app/model"
-	"students-service/internal/app/usecase"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nurmeden/students-service/internal/app/model"
+	"github.com/nurmeden/students-service/internal/app/usecase"
 )
 
 type StudentHandler struct {
 	studentUsecase usecase.StudentUsecase
+
 	// logger         logger.Logger
 }
 
@@ -29,6 +31,7 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&student)
 	if err != nil {
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to decode request body"})
 		return
 	}
@@ -47,6 +50,19 @@ func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	studentID := c.Param("id")
 	fmt.Printf("studentID: %v\n", studentID)
 	student, err := h.studentUsecase.GetStudentByID(context.Background(), studentID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Printf("student get by id: %v\n", student)
+
+	c.JSON(http.StatusOK, student)
+}
+
+func (h *StudentHandler) GetStudentByCoursesID(c *gin.Context) {
+	courseID := c.Param("id")
+	fmt.Printf("courseID: %v\n", courseID)
+	student, err := h.studentUsecase.GetStudentByCoursesID(context.Background(), courseID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -76,30 +92,33 @@ func (h *StudentHandler) SignIn(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": authResult.Token})
 }
 
-// func (h *StudentHandler) CreateStudent(w http.ResponseWriter, r *http.Request) {
-// 	var student model.Student
-// 	err := json.NewDecoder(r.Body).Decode(&student)
-// 	if err != nil {
-// 		// h.logger.Errorf("Failed to decode request body: %v", err)
-// 		http.Error(w, "Failed to decode request body", http.StatusBadRequest)
-// 		return
-// 	}
+func (sc *StudentHandler) GetStudentCourses(c *gin.Context) {
+	// Получаем идентификатор студента из URL-параметров
+	studentID := c.Param("id")
 
-// 	createdStudent, err := h.studentUsecase.CreateStudent(&student)
-// 	if err != nil {
-// 		// h.logger.Errorf("Failed to create student: %v", err)
-// 		http.Error(w, "Failed to create student", http.StatusInternalServerError)
-// 		return
-// 	}
+	// Отправляем запрос к второму микросервису, отвечающему за курсы, используя HTTP-запрос
+	// Например, можно использовать стандартный пакет net/http для выполнения GET-запроса
+	resp, err := http.Get("http://localhost:8080/api/courses/" + studentID + "/courses")
+	fmt.Printf("resp: %v\n", resp)
+	if err != nil {
+		// Обработка ошибки
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get student courses"})
+		return
+	}
+	defer resp.Body.Close()
 
-// 	response, err := json.Marshal(createdStudent)
-// 	if err != nil {
-// 		// h.logger.Errorf("Failed to marshal response: %v", err)
-// 		http.Error(w, "Failed to marshal response", http.StatusInternalServerError)
-// 		return
-// 	}
+	fmt.Printf("resp: %v\n", resp)
 
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusCreated)
-// 	w.Write(response)
-// }
+	// Чтение ответа и обработка данных
+	// Например, можно использовать пакет encoding/json для декодирования JSON-ответа
+	var course *model.CourseResponse
+	err = json.NewDecoder(resp.Body).Decode(&course)
+	if err != nil {
+		// Обработка ошибки
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode student courses"})
+		return
+	}
+
+	// Отправляем данные о курсах в качестве ответа
+	c.JSON(http.StatusOK, gin.H{"courses": course})
+}
