@@ -59,7 +59,6 @@ func (u *studentUsecase) DeleteStudent(ctx context.Context, id string) error {
 }
 
 func (u *studentUsecase) SignIn(signInData *model.SignInData) (*model.AuthToken, error) {
-
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["userID"] = signInData.UserID

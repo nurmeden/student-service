@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nurmeden/students-service/internal/app/model"
 	"github.com/nurmeden/students-service/internal/app/usecase"
+	"github.com/sirupsen/logrus"
 )
 
 type StudentHandler struct {
@@ -35,7 +36,7 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 
 	createdStudent, err := h.studentUsecase.CreateStudent(context.Background(), &student)
 	if err != nil {
-		log.Println(err.Error())
+		logrus.Errorf("Failed to create student: %s", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student"})
 		return
 	}
@@ -46,6 +47,7 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	studentID := c.Param("id")
 	fmt.Printf("studentID: %v\n", studentID)
+
 	student, err := h.studentUsecase.GetStudentByID(context.Background(), studentID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

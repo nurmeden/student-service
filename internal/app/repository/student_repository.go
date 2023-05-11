@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
+	"github.com/go-redis/redis"
 	"github.com/nurmeden/students-service/internal/app/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,11 +16,13 @@ import (
 type StudentRepository struct {
 	client     *mongo.Client
 	collection *mongo.Collection
+	cache      *redis.Client
 }
 
-func NewStudentRepository(client *mongo.Client, dbName string, collectionName string) (*StudentRepository, error) {
+func NewStudentRepository(client *mongo.Client, dbName string, collectionName string, cache *redis.Client) (*StudentRepository, error) {
 	r := &StudentRepository{
 		client: client,
+		cache:  cache,
 	}
 
 	collection := client.Database(dbName).Collection(collectionName)
@@ -42,6 +46,17 @@ func (r *StudentRepository) Create(ctx context.Context, student *model.Student) 
 }
 
 func (r *StudentRepository) Read(ctx context.Context, id string) (*model.Student, error) {
+	cachedResult, err := r.cache.Get(id).Result()
+	if err == nil {
+		student := &model.Student{}
+		err = json.Unmarshal([]byte(cachedResult), student)
+		if err != nil {
+			return nil, err
+		}
+		return student, nil
+	}
+	fmt.Printf("cachedResult: %v\n", cachedResult)
+
 	var student model.Student
 	studentId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -55,19 +70,50 @@ func (r *StudentRepository) Read(ctx context.Context, id string) (*model.Student
 		}
 		return nil, fmt.Errorf("failed to read student: %v", err)
 	}
+
+	studentJSON, err := json.Marshal(student)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.cache.Set(id, studentJSON, 0).Err()
+	if err != nil {
+		return nil, err
+	}
+
 	return &student, nil
 }
 
 func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error) {
+	cachedResult, err := r.cache.Get(id).Result()
+	if err == nil {
+		student := &model.Student{}
+		err = json.Unmarshal([]byte(cachedResult), student)
+		if err != nil {
+			return nil, err
+		}
+		return student, nil
+	}
+
 	var student model.Student
 
 	filter := bson.M{"courses": id}
-	err := r.collection.FindOne(ctx, filter).Decode(&student)
+	err = r.collection.FindOne(ctx, filter).Decode(&student)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil // Если студент не найден, возвращаем nil и ошибку nil
 		}
 		return nil, fmt.Errorf("failed to read student: %v", err)
+	}
+
+	studentJSON, err := json.Marshal(student)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.cache.Set(id, studentJSON, 0).Err()
+	if err != nil {
+		return nil, err
 	}
 	return &student, nil
 }
