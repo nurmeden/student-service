@@ -25,26 +25,26 @@ func main() {
 
 	defer logfile.Close()
 
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetOutput(logfile)
-	logrus.SetLevel(logrus.DebugLevel)
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetOutput(logfile)
+	logger.SetLevel(logrus.DebugLevel)
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis:6379",
 		Password: "",
 		DB:       0,
 	})
 
 	defer redisClient.Close()
 
-	// Проверка подключения к Redis
 	_, err = redisClient.Ping().Result()
 	if err != nil {
-		log.Fatal("Ошибка подключения к Redis:", err)
+		logger.Fatal("Ошибка подключения к Redis:", err)
 	}
 
 	client := database.SetupDatabase()
-	logrus.Infoln("Creating Database")
+	logger.Infoln("Creating Database")
 
 	defer client.Disconnect(context.Background())
 
@@ -55,9 +55,9 @@ func main() {
 
 	prometheus.MustRegister(counter)
 
-	studentRepo, _ := repository.NewStudentRepository(client, "studentsdb", "students", redisClient)
+	studentRepo, _ := repository.NewStudentRepository(client, "studentsdb", "students", redisClient, logger)
 
-	studentUsecase := usecase.NewStudentUsecase(*studentRepo)
+	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger)
 
 	studentHandler := handler.NewStudentHandler(studentUsecase)
 

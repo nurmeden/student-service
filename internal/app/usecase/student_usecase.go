@@ -2,12 +2,12 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/nurmeden/students-service/internal/app/model"
 	"github.com/nurmeden/students-service/internal/app/repository"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,21 +22,22 @@ type StudentUsecase interface {
 
 type studentUsecase struct {
 	studentRepo repository.StudentRepository
+	logger      *logrus.Logger
 }
 
-func NewStudentUsecase(studentRepo repository.StudentRepository) StudentUsecase {
+func NewStudentUsecase(studentRepo repository.StudentRepository, logger *logrus.Logger) StudentUsecase {
 	return &studentUsecase{
 		studentRepo: studentRepo,
+		logger:      logger,
 	}
 }
 
 func (u *studentUsecase) CreateStudent(ctx context.Context, student *model.Student) (*model.Student, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(student.Password), bcrypt.DefaultCost)
 	if err != nil {
+		u.logger.Errorf("Error generating password hash: %v", err)
 		return nil, err
 	}
-	fmt.Printf("hashedPassword: %v\n", hashedPassword)
-
 	student.Password = string(hashedPassword)
 
 	return u.studentRepo.Create(ctx, student)

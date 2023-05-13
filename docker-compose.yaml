@@ -13,10 +13,27 @@ services:
       - internal
     ports:
       - "27017:27017"
+    expose:
+      - "27017"
 
-  student-service:
+  app:
     build: .
     networks:
       - internal
     ports:
       - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=mongodb://studentsdb:27017
+      - DB_NAME=studentsdb
+    expose:
+      - "8000"
+  
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
