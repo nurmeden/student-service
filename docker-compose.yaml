@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.9"
 
 networks:
   internal:
@@ -8,13 +8,21 @@ networks:
 services:
   studentsdb:
     image: mongo:latest
-    restart: always
     networks:
       - internal
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: studentsdb
     ports:
       - "27017:27017"
-    expose:
-      - "27017"
+    
+  redis:
+    image: redis:latest
+    networks:
+      - internal
+    restart: always
+    ports:
+      - "6379:6379"
 
   app:
     build: .
@@ -24,16 +32,10 @@ services:
       - "8000:8000"
     depends_on:
       - redis
+      - studentsdb
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - DB_HOST=mongodb://studentsdb:27017
-      - DB_NAME=studentsdb
+    - MONGODB_URI= "mongodb://studentsdb:27017"
+    - REDIS_HOST= redis
+    - REDIS_PORT= 6379
     expose:
       - "8000"
-  
-  redis:
-    image: redis:latest
-    restart: always
-    ports:
-      - "6379:6379"

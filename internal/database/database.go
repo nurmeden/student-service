@@ -9,21 +9,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func SetupDatabase() *mongo.Client {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://studentsdb:27017"))
+func SetupDatabase() (*mongo.Client, error) {
+	co := options.Client().ApplyURI("mongodb://studentsdb:27017")
+	client, err := mongo.NewClient(co)
 	if err != nil {
 		fmt.Printf("Failed to connect to MongoDB: %v", err)
-		return nil
+		return nil, err
 	}
 	if err != nil {
 		fmt.Printf("Failed to connect to MongoDB: %v", err)
-		return nil
+		return nil, err
 	}
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		log.Fatal("FFFFFFFFFFFFFFFFFFFFFF", err)
-		return nil
+		return nil, err
 	}
 	fmt.Printf("client: %v\n", client)
-	return client
+	return client, nil
 }

@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"github.com/joho/godotenv"
 	handler "github.com/nurmeden/students-service/internal/app/handlers"
 	"github.com/nurmeden/students-service/internal/app/repository"
 	"github.com/nurmeden/students-service/internal/app/usecase"
@@ -30,20 +32,31 @@ func main() {
 	logger.SetOutput(logfile)
 	logger.SetLevel(logrus.DebugLevel)
 
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
 		Password: "",
 		DB:       0,
 	})
 
+	fmt.Printf("redisClient: %v\n", redisClient)
+
 	defer redisClient.Close()
 
 	_, err = redisClient.Ping().Result()
 	if err != nil {
+		fmt.Println(err.Error())
 		logger.Fatal("Ошибка подключения к Redis:", err)
 	}
 
-	client := database.SetupDatabase()
+	client, err := database.SetupDatabase()
+	if err != nil {
+		logger.Errorf("error is client %s", err)
+		fmt.Println(err.Error())
+	}
 	logger.Infoln("Creating Database")
 
 	defer client.Disconnect(context.Background())
