@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -28,4 +29,11 @@ func main() {
 		DB:       0,
 	})
 
+	defer redisClient.Close()
+
+	_, err = redisClient.Ping().Result()
+	if err != nil {
+		fmt.Println(err.Error())
+		logger.Fatal("Ошибка подключения к Redis:", err)
+	}
 }
