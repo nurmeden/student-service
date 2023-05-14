@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
+	"github.com/nurmeden/students-service/internal/app/repository"
 	"github.com/nurmeden/students-service/internal/database"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -55,4 +56,7 @@ func main() {
 
 	db_name := viper.GetString("DATABASE_NAME")
 	collection_name := viper.GetString("COLLECTION_NAME")
+
+	studentRepo, _ := repository.NewStudentRepository(client, db_name, collection_name, redisClient, logger)
+
 }
