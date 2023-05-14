@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/nurmeden/students-service/internal/database"
 	"github.com/sirupsen/logrus"
 )
 
@@ -36,4 +38,12 @@ func main() {
 		fmt.Println(err.Error())
 		logger.Fatal("Ошибка подключения к Redis:", err)
 	}
+
+	client, err := database.SetupDatabase()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer client.Disconnect(context.Background())
 }
