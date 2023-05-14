@@ -8,14 +8,13 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	// _ "github.com/nurmeden/students-service/cmd/docs"
 	"github.com/nurmeden/students-service/internal/app/model"
 	"github.com/nurmeden/students-service/internal/app/usecase"
 	"github.com/sirupsen/logrus"
 )
 
 const endpoint = "http://localhost:8080/api/courses/"
-
-var blackListedTokens = make(map[string]bool)
 
 type StudentHandler struct {
 	studentUsecase usecase.StudentUsecase
@@ -35,9 +34,10 @@ func NewStudentHandler(studentUsecase usecase.StudentUsecase, logger *logrus.Log
 // @Tags Students
 // @Accept  json
 // @Produce  json
-// @Param input body CreateStudentRequest true "Create Student Request"
-// @Success 201 {object} CreateStudentResponse
+// @Param student body model.Student true "Student data"
+// @Success 201 {object} model.Student
 // @Router /api/students/ [post]
+// @Router /api/auth/sign-up/ [post]
 func (h *StudentHandler) CreateStudent(c *gin.Context) {
 	var student model.Student
 
@@ -58,17 +58,14 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 	c.JSON(http.StatusCreated, createdStudent)
 }
 
-// GetStudentByID.
+// GetStudentByID godoc
 // @Summary Get student by ID
 // @Description Get student by ID
 // @Tags students
 // @Accept json
 // @Produce json
 // @Param id path string true "Student ID"
-// @Success 200 {object} models.Student
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
+// @Success 200 {object} model.Student
 // @Router /students/{id} [get]
 func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	fmt.Printf("c.Request.URL: %v\n", c.Request.URL)
@@ -85,17 +82,16 @@ func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
-// UpdateStudents
-// @Summary Update a student
-// @Description Update a student with the given ID
+// UpdateStudents godoc
+// @Summary Update a student by ID
+// @Description Update a student by ID
 // @Tags students
-// @Accept  json
-// @Produce  json
+// @Accept json
+// @Produce json
 // @Param id path string true "Student ID"
-// @Param student body model.Student true "Student data"
-// @Success 200 {object} map[string]interface{}{"data": model.Student}
-// @Failure 400 {object} map[string]string{"error": "bad request"}
-// @Failure 500 {object} map[string]string{"error": "internal server error"}
+// @Param student body model.Student true "Student object"
+// @Success 200 {object} model.Student
+
 // @Router /students/{id} [put]
 func (h *StudentHandler) UpdateStudents(c *gin.Context) {
 	studentID := c.Param("id")
@@ -116,14 +112,14 @@ func (h *StudentHandler) UpdateStudents(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": student})
 }
 
+// DeleteStudent godoc
 // @Summary Delete a student by ID
-// @Description Delete a student by the given identifier
+// @Description Delete a student by its ID
 // @Tags students
-// @Param id path string true "Student ID"
-// @Success 200 {object} gin.H
-// @Failure 400 {object} gin.H
-// @Failure 500 {object} gin.H
-// @Router /api/students/{id} [delete]
+// @Param id path int true "Student ID"
+// @Success 200 {string} string "message: Студент успешно удален"
+
+// @Router /students/{id} [delete]
 func (h *StudentHandler) DeleteStudent(c *gin.Context) {
 	studentID := c.Param("id")
 
@@ -149,6 +145,16 @@ func (h *StudentHandler) GetStudentByCoursesID(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
+// SignIn godoc
+// @Summary Sign in a student
+// @Description Authenticates a student using their email and password
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param signInData body model.SignInData true "Sign in data"
+// @Success 200 {object} TokenResponse
+
+// @Router /api/sign-in [post]
 func (h *StudentHandler) SignIn(c *gin.Context) {
 	var signInData model.SignInData
 	err := c.ShouldBindJSON(&signInData)

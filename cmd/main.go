@@ -18,12 +18,15 @@ import (
 	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	docs "github.com/nurmeden/students-service/docs"
 )
 
 // @title Students API
-// @version 1.0
+// @version 1
 // @description API for managing students
-// @BasePath /api
+// @host		localhost:8000
+// @BasePath /api/
 func main() {
 	logfile, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 
@@ -81,7 +84,7 @@ func main() {
 	studentHandler := handler.NewStudentHandler(studentUsecase, logger)
 
 	router := gin.Default()
-
+	docs.SwaggerInfo.BasePath = "/api"
 	api := router.Group("/api/")
 	{
 		studentsGroup := api.Group("/students/")
@@ -102,7 +105,8 @@ func main() {
 			auth.POST("/logout", studentHandler.Logout)
 			auth.POST("/refresh-token", studentHandler.RefreshToken)
 		}
-		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.Run(":8000")

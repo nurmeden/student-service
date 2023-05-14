@@ -1,0 +1,96 @@
+definitions:
+  model.Student:
+    properties:
+      age:
+        type: string
+      courses:
+        items:
+          type: string
+        type: array
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      password:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/auth/sign-up/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new student with the input payload
+      parameters:
+      - description: Student data
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/model.Student'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Student'
+      summary: Create a new student
+      tags:
+      - Students
+  /api/sign-in:
+    post:
+      responses: {}
+  /api/students/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new student with the input payload
+      parameters:
+      - description: Student data
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/model.Student'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Student'
+      summary: Create a new student
+      tags:
+      - Students
+  /students/{id}:
+    delete:
+      responses: {}
+    get:
+      consumes:
+      - application/json
+      description: Get student by ID
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Student'
+      summary: Get student by ID
+      tags:
+      - students
+    put:
+      responses: {}
+swagger: "2.0"
