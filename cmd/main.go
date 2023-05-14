@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
 	handler "github.com/nurmeden/students-service/internal/app/handlers"
@@ -64,4 +65,6 @@ func main() {
 	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger)
 
 	studentHandler := handler.NewStudentHandler(studentUsecase)
+
+	router := gin.Default()
 }
