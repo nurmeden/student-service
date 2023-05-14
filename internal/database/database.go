@@ -9,8 +9,8 @@ import (
 )
 
 func SetupDatabase(ctx context.Context, mongoURI string) (*mongo.Client, error) {
-	co := options.Client().ApplyURI(mongoURI)
-
+	co := options.Client().ApplyURI("mongodb://studentsdb:27017")
+	fmt.Printf("mongoURI: %v\n", mongoURI)
 	client, err := mongo.Connect(ctx, co)
 	if err != nil {
 		fmt.Printf("Failed to connect to MongoDB: %v", err)

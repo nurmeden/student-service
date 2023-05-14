@@ -16,6 +16,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -50,18 +52,15 @@ func main() {
 		logger.Fatal("Ошибка подключения к Redis:", err)
 	}
 
-	dbName := os.Getenv("DATABASE_NAME")
+	// dbName := os.Getenv("DATABASE_NAME")
 	mongoURI := os.Getenv("MONGODB_URI")
-	collectionName := os.Getenv("COLLECTION_NAME")
-	fmt.Printf("mongoURI: %v\n", mongoURI)
+	// collectionName := os.Getenv("COLLECTION_NAME")
 
 	client, err := database.SetupDatabase(context.Background(), mongoURI)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	fmt.Printf("client: %v\n", client)
-
 	defer client.Disconnect(context.Background())
 
 	counter := prometheus.NewCounterVec(prometheus.CounterOpts{
@@ -71,7 +70,7 @@ func main() {
 
 	prometheus.MustRegister(counter)
 
-	studentRepo, _ := repository.NewStudentRepository(client, dbName, collectionName, redisClient, logger)
+	studentRepo, _ := repository.NewStudentRepository(client, "studentsdb", "students", redisClient, logger)
 
 	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger, redisClient)
 
@@ -100,6 +99,7 @@ func main() {
 			auth.POST("/refresh-token", studentHandler.RefreshToken)
 		}
 	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.Run(":8000")
 }

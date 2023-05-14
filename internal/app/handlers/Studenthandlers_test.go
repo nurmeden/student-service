@@ -1,93 +1,137 @@
 package handler
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nurmeden/students-service/internal/app/handlers/mocks"
+	"github.com/nurmeden/students-service/internal/app/model"
 	"github.com/nurmeden/students-service/internal/app/usecase"
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestStudentHandler_SignIn(t *testing.T) {
+	mockStudentUsecase := &mocks.MockStudentUsecase{}
+	mockLogger := logrus.New()
+
 	type fields struct {
 		studentUsecase usecase.StudentUsecase
+		logger         *logrus.Logger
 	}
 	type args struct {
 		c *gin.Context
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
+		name         string
+		fields       fields
+		args         args
+		expectedCode int
+		expectedBody string
+		mockFn       func()
+		jsonBody     string
 	}{
-		// {
-		// 	name: "Valid credentials",
-		// 	fields: fields{
-		// 		studentUsecase: &mockStudentUsecase{},
-		// 	},
-		// 	args: args{
-		// 		c: &gin.Context{},
-		// 	},
-		// },
-		// {
-		// 	name: "Invalid email",
-		// 	fields: fields{
-		// 		studentUsecase: &mockStudentUsecase{},
-		// 	},
-		// 	args: args{
-		// 		c: &gin.Context{
-		// 			Request: &http.Request{
-		// 				Form: url.Values{
-		// 					"email":    {"invalid_email"},
-		// 					"password": {"password123"},
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	name: "Incorrect password",
-		// 	fields: fields{
-		// 		studentUsecase: &mockStudentUsecase{},
-		// 	},
-		// 	args: args{
-		// 		c: &gin.Context{
-		// 			Request: &http.Request{
-		// 				Form: url.Values{
-		// 					"email":    {"valid_email@example.com"},
-		// 					"password": {"wrong_password"},
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	name: "Usecase error",
-		// 	fields: fields{
-		// 		studentUsecase: &mockStudentUsecase{
-		// 			signInFunc: func(ctx context.Context, email, password string) (*domain.Student, error) {
-		// 				return nil, errors.New("usecase error")
-		// 			},
-		// 		},
-		// 	},
-		// 	args: args{
-		// 		c: &gin.Context{
-		// 			Request: &http.Request{
-		// 				Form: url.Values{
-		// 					"email":    {"valid_email@example.com"},
-		// 					"password": {"password123"},
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// },
+		{
+			name: "Successful sign in",
+			fields: fields{
+				studentUsecase: mockStudentUsecase,
+				logger:         mockLogger,
+			},
+			args: args{
+				c: &gin.Context{}, // Replace with actual context
+			},
+			expectedCode: http.StatusOK,
+			expectedBody: "{\"token\":\"auth_token\"}", // \"refresh_token\":\"refresh_token\"
+			mockFn: func() {
+				mockStudentUsecase.On("SignIn", mock.Anything, mock.Anything).Return(&model.AuthToken{Token: "auth_token"}, nil)
+			},
+			jsonBody: "{\"email\":\"test@test.com\",\"password\":\"password\"}",
+		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Cleanup(func() {
+				mockStudentUsecase.AssertExpectations(t)
+			})
+			tt.mockFn()
 			h := &StudentHandler{
 				studentUsecase: tt.fields.studentUsecase,
+				logger:         tt.fields.logger,
 			}
-			h.SignIn(tt.args.c)
+
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request = httptest.NewRequest("POST", "/signin", strings.NewReader(tt.jsonBody))
+
+			h.SignIn(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			assert.Equal(t, tt.expectedBody, w.Body.String())
+		})
+	}
+
+}
+
+func TestStudentHandler_CreateStudent(t *testing.T) {
+	mockStudentUsecase := &mocks.MockStudentUsecase{}
+	// mockLogger := logrus.New()
+	type fields struct {
+		studentUsecase usecase.StudentUsecase
+		logger         *logrus.Logger
+	}
+	type args struct {
+		c *gin.Context
+	}
+	tests := []struct {
+		name         string
+		fields       fields
+		args         args
+		expectedCode int
+		expectedBody string
+		mockFn       func()
+		jsonBody     string
+	}{
+		{
+			name: "Success",
+			fields: fields{
+				studentUsecase: mockStudentUsecase,
+				logger:         logrus.New(),
+			},
+			args: args{
+				c: &gin.Context{},
+			},
+			expectedCode: http.StatusCreated,
+			expectedBody: "{\"_id\":\"gdfhdhd\", \"firstName\":\"Dulat\", \"lastName\":\"Nurmeden\", \"password\":\"qwerty\", \"email\":\"nurmeden@gmail.com\", \"age\":\"eht\", \"courses\":null}",
+			mockFn: func() {
+				mockStudentUsecase.On("CreateStudent", mock.Anything, mock.Anything).Return(nil)
+
+				// mockStudentUsecase.On("Create", mock.Anything, mock.Anything).Return(&model.Student{}, nil)
+			},
+			jsonBody: "{\"email\":\"test@test.com\",\"password\":\"password\"}",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Cleanup(func() {
+				mockStudentUsecase.AssertExpectations(t)
+			})
+			tt.mockFn()
+			h := &StudentHandler{
+				studentUsecase: tt.fields.studentUsecase,
+				logger:         tt.fields.logger,
+			}
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request = httptest.NewRequest("POST", "/sign-up", strings.NewReader(tt.jsonBody))
+
+			h.CreateStudent(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			assert.Equal(t, tt.expectedBody, w.Body.String())
 		})
 	}
 }

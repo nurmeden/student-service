@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/nurmeden/students-service/internal/app/model"
 	"github.com/nurmeden/students-service/internal/app/usecase"
 	"github.com/sirupsen/logrus"
@@ -50,6 +49,15 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 	c.JSON(http.StatusCreated, createdStudent)
 }
 
+// GetStudentByID returns a single student by ID.
+// @Summary Get a student by ID.
+// @Description Get a student by ID.
+// @Tags students
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Student ID"
+// @Success 200 {object} models.Student
+// @Router /students/{id} [get]
 func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	fmt.Printf("c.Request.URL: %v\n", c.Request.URL)
 	studentID := c.Param("id")
@@ -123,14 +131,14 @@ func (h *StudentHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	refreshToken := uuid.New().String()
-	err = h.studentUsecase.SaveRefreshToken(authResult.UserID, refreshToken)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save refresh token"})
-		return
-	}
+	// refreshToken := uuid.New().String()
+	// err = h.studentUsecase.SaveRefreshToken(authResult.UserID, refreshToken)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save refresh token"})
+	// 	return
+	// }
 
-	c.JSON(http.StatusOK, gin.H{"token": authResult.Token, "refresh_token": refreshToken})
+	c.JSON(http.StatusOK, gin.H{"token": authResult.Token})
 }
 
 func (sc *StudentHandler) GetStudentCourses(c *gin.Context) {

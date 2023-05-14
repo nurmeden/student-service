@@ -8,7 +8,7 @@ type Student struct {
 	LastName  string   `bson:"lastName"`
 	Password  string   `bson:"password"`
 	Email     string   `json:"email"`
-	Age       int      `bson:"age"`
+	Age       string   `bson:"age"`
 	Courses   []string `json:"courses"`
 }
 

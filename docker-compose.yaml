@@ -24,7 +24,7 @@ services:
     ports:
       - "6380:6379"
 
-  app:
+  student-service:
     build: .
     networks:
       - internal
@@ -34,8 +34,8 @@ services:
       - redis
       - studentsdb
     environment:
-    - MONGODB_URI= "mongodb://studentsdb:27017"
-    - REDIS_HOST= redis
-    - REDIS_PORT= 6379
+    - MONGODB_URI="mongodb://studentsdb:27017"
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
     expose:
       - "8000"
