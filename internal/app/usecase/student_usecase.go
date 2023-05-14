@@ -15,7 +15,7 @@ type StudentUsecase interface {
 	CreateStudent(ctx context.Context, student *model.Student) (*model.Student, error)
 	GetStudentByID(ctx context.Context, id string) (*model.Student, error)
 	GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error)
-	UpdateStudent(ctx context.Context, student *model.Student) (*model.Student, error)
+	UpdateStudent(ctx context.Context, student_id string, student *model.Student) (*model.Student, error)
 	DeleteStudent(ctx context.Context, id string) error
 	SignIn(signInData *model.SignInData) (*model.AuthToken, error)
 }
@@ -51,7 +51,12 @@ func (u *studentUsecase) GetStudentByCoursesID(ctx context.Context, id string) (
 	return u.studentRepo.GetStudentByCoursesID(ctx, id)
 }
 
-func (u *studentUsecase) UpdateStudent(ctx context.Context, student *model.Student) (*model.Student, error) {
+func (u *studentUsecase) UpdateStudent(ctx context.Context, student_id string, student *model.Student) (*model.Student, error) {
+	student, err := u.studentRepo.Read(ctx, student_id)
+	if err != nil {
+		return nil, err
+	}
+
 	return u.studentRepo.Update(ctx, student)
 }
 

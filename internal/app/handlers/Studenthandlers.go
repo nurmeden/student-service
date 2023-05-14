@@ -13,11 +13,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const endpoint = "http://localhost:8080/api/courses/"
+
 type StudentHandler struct {
 	studentUsecase usecase.StudentUsecase
 }
 
-// func NewStudentHandler(studentUsecase usecase.StudentUsecase, logger logger.Logger) *StudentHandler {
 func NewStudentHandler(studentUsecase usecase.StudentUsecase) *StudentHandler {
 	return &StudentHandler{
 		studentUsecase: studentUsecase,
@@ -58,6 +59,37 @@ func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
+func (h *StudentHandler) UpdateStudents(c *gin.Context) {
+	studentID := c.Param("id")
+
+	var studentUpdateInput model.Student
+
+	if err := c.ShouldBindJSON(&studentUpdateInput); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	student, err := h.studentUsecase.UpdateStudent(context.Background(), studentID, &studentUpdateInput)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": student})
+}
+
+func (h *StudentHandler) DeleteStudent(c *gin.Context) {
+	studentID := c.Param("id")
+
+	err := h.studentUsecase.DeleteStudent(context.Background(), studentID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Студент успешно удален"})
+}
+
 func (h *StudentHandler) GetStudentByCoursesID(c *gin.Context) {
 	courseID := c.Param("id")
 	fmt.Printf("courseID: %v\n", courseID)
@@ -91,7 +123,7 @@ func (h *StudentHandler) SignIn(c *gin.Context) {
 func (sc *StudentHandler) GetStudentCourses(c *gin.Context) {
 	studentID := c.Param("id")
 
-	resp, err := http.Get("http://localhost:8080/api/courses/" + studentID + "/courses")
+	resp, err := http.Get(endpoint + studentID + "/courses")
 	fmt.Printf("resp: %v\n", resp)
 	if err != nil {
 		// Обработка ошибки

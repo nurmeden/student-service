@@ -16,6 +16,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -68,7 +69,10 @@ func main() {
 
 	prometheus.MustRegister(counter)
 
-	studentRepo, _ := repository.NewStudentRepository(client, "studentsdb", "students", redisClient, logger)
+	db_name := viper.GetString("DATABASE_NAME")
+	collection_name := viper.GetString("COLLECTION_NAME")
+
+	studentRepo, _ := repository.NewStudentRepository(client, db_name, collection_name, redisClient, logger)
 
 	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger)
 
@@ -81,6 +85,8 @@ func main() {
 	{
 		api.POST("/students", studentHandler.CreateStudent)
 		api.GET("/students/:id", studentHandler.GetStudentByID)
+		api.PUT("/students/:id", studentHandler.UpdateStudents)
+		api.DELETE("/students/:id", studentHandler.DeleteStudent)
 		api.GET("/students/:id/courses", studentHandler.GetStudentCourses)
 		api.GET("/students/:id/students", studentHandler.GetStudentByCoursesID)
 		auth := api.Group("/auth/")
