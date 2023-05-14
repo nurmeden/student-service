@@ -92,4 +92,5 @@ func main() {
 		}
 	}
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	router.Run(":8000")
 }
