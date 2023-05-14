@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -13,4 +15,10 @@ func main() {
 	}
 
 	defer logfile.Close()
+
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetOutput(logfile)
+	logger.SetLevel(logrus.DebugLevel)
+
 }
