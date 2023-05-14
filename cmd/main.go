@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
+	handler "github.com/nurmeden/students-service/internal/app/handlers"
 	"github.com/nurmeden/students-service/internal/app/repository"
 	"github.com/nurmeden/students-service/internal/app/usecase"
 	"github.com/nurmeden/students-service/internal/database"
@@ -61,4 +62,6 @@ func main() {
 	studentRepo, _ := repository.NewStudentRepository(client, db_name, collection_name, redisClient, logger)
 
 	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger)
+
+	studentHandler := handler.NewStudentHandler(studentUsecase)
 }
