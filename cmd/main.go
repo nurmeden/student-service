@@ -14,6 +14,7 @@ import (
 	"github.com/nurmeden/students-service/internal/app/usecase"
 	"github.com/nurmeden/students-service/internal/database"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -90,4 +91,5 @@ func main() {
 			auth.POST("/sign-in", studentHandler.SignIn)
 		}
 	}
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 }
