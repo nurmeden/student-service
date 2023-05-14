@@ -67,4 +67,19 @@ func main() {
 	studentHandler := handler.NewStudentHandler(studentUsecase)
 
 	router := gin.Default()
+
+	api := router.Group("/api/")
+	{
+		api.POST("/students", studentHandler.CreateStudent)
+		api.GET("/students/:id", studentHandler.GetStudentByID)
+		api.PUT("/students/:id", studentHandler.UpdateStudents)
+		api.DELETE("/students/:id", studentHandler.DeleteStudent)
+		api.GET("/students/:id/courses", studentHandler.GetStudentCourses)
+		api.GET("/students/:id/students", studentHandler.GetStudentByCoursesID)
+		auth := api.Group("/auth/")
+		{
+			auth.POST("/sign-up", studentHandler.CreateStudent)
+			auth.POST("/sign-in", studentHandler.SignIn)
+		}
+	}
 }
