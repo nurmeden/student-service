@@ -20,6 +20,10 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Students API
+// @version 1.0
+// @description API for managing students
+// @BasePath /api
 func main() {
 	logfile, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 
