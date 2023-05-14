@@ -1,0 +1,8 @@
+basePath: /api
+info:
+  contact: {}
+  description: API for managing students
+  title: Students API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

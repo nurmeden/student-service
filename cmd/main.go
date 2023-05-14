@@ -102,8 +102,8 @@ func main() {
 			auth.POST("/logout", studentHandler.Logout)
 			auth.POST("/refresh-token", studentHandler.RefreshToken)
 		}
+		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.Run(":8000")
 }

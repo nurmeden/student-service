@@ -10,3 +10,7 @@
 {"level":"error","msg":"Error retrieving student with email nurmeden.02@gmail.com: mongo: no documents in result","time":"2023-05-14T13:10:36+06:00"}
 {"level":"info","msg":"Creating new student: \u0026{ID: FirstName: LastName: Password:$2a$10$bmeSDUAVSS.9.gsjxINbL.RpuG4nsUVe9WHuAqrAD1plp1Hg4ycI. Email:nurmeden.02@gmail.com Age:0 Courses:[]}","time":"2023-05-14T13:10:59+06:00"}
 {"level":"info","msg":"Student created successfully","time":"2023-05-14T13:10:59+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp: lookup redis on 127.0.0.53:53: server misbehaving","time":"2023-05-15T02:27:53+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-15T02:36:04+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp: lookup redis on 127.0.0.53:53: server misbehaving","time":"2023-05-15T02:43:25+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-15T02:53:03+06:00"}

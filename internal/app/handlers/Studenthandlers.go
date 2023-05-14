@@ -29,6 +29,15 @@ func NewStudentHandler(studentUsecase usecase.StudentUsecase, logger *logrus.Log
 	}
 }
 
+// CreateStudent godoc
+// @Summary Create a new student
+// @Description Create a new student with the input payload
+// @Tags Students
+// @Accept  json
+// @Produce  json
+// @Param input body CreateStudentRequest true "Create Student Request"
+// @Success 201 {object} CreateStudentResponse
+// @Router /api/students/ [post]
 func (h *StudentHandler) CreateStudent(c *gin.Context) {
 	var student model.Student
 
@@ -49,14 +58,17 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 	c.JSON(http.StatusCreated, createdStudent)
 }
 
-// GetStudentByID returns a single student by ID.
-// @Summary Get a student by ID.
-// @Description Get a student by ID.
+// GetStudentByID.
+// @Summary Get student by ID
+// @Description Get student by ID
 // @Tags students
-// @Accept  json
-// @Produce  json
-// @Param id path int true "Student ID"
+// @Accept json
+// @Produce json
+// @Param id path string true "Student ID"
 // @Success 200 {object} models.Student
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /students/{id} [get]
 func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	fmt.Printf("c.Request.URL: %v\n", c.Request.URL)
@@ -73,6 +85,18 @@ func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
+// UpdateStudents
+// @Summary Update a student
+// @Description Update a student with the given ID
+// @Tags students
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Student ID"
+// @Param student body model.Student true "Student data"
+// @Success 200 {object} map[string]interface{}{"data": model.Student}
+// @Failure 400 {object} map[string]string{"error": "bad request"}
+// @Failure 500 {object} map[string]string{"error": "internal server error"}
+// @Router /students/{id} [put]
 func (h *StudentHandler) UpdateStudents(c *gin.Context) {
 	studentID := c.Param("id")
 
@@ -92,6 +116,14 @@ func (h *StudentHandler) UpdateStudents(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": student})
 }
 
+// @Summary Delete a student by ID
+// @Description Delete a student by the given identifier
+// @Tags students
+// @Param id path string true "Student ID"
+// @Success 200 {object} gin.H
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /api/students/{id} [delete]
 func (h *StudentHandler) DeleteStudent(c *gin.Context) {
 	studentID := c.Param("id")
 
