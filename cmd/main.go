@@ -13,6 +13,7 @@ import (
 	"github.com/nurmeden/students-service/internal/app/repository"
 	"github.com/nurmeden/students-service/internal/app/usecase"
 	"github.com/nurmeden/students-service/internal/database"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -56,6 +57,13 @@ func main() {
 	}
 
 	defer client.Disconnect(context.Background())
+
+	counter := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "requests_total",
+		Help: "Total number of requests processed by the server, partitioned by status code and HTTP method.",
+	}, []string{"code", "method"})
+
+	prometheus.MustRegister(counter)
 
 	db_name := viper.GetString("DATABASE_NAME")
 	collection_name := viper.GetString("COLLECTION_NAME")
