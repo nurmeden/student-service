@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/nurmeden/students-service/internal/database"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -52,4 +53,6 @@ func main() {
 
 	defer client.Disconnect(context.Background())
 
+	db_name := viper.GetString("DATABASE_NAME")
+	collection_name := viper.GetString("COLLECTION_NAME")
 }
