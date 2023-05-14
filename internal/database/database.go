@@ -3,25 +3,23 @@ package database
 import (
 	"context"
 	"fmt"
-	"log"
 
-	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func SetupDatabase() (*mongo.Client, error) {
-	co := options.Client().ApplyURI(viper.GetString("MONGODB_URI"))
-	client, err := mongo.NewClient(co)
+func SetupDatabase(ctx context.Context, mongoURI string) (*mongo.Client, error) {
+	co := options.Client().ApplyURI(mongoURI)
+
+	client, err := mongo.Connect(ctx, co)
 	if err != nil {
 		fmt.Printf("Failed to connect to MongoDB: %v", err)
 		return nil, err
 	}
-	err = client.Ping(context.Background(), nil)
+	err = client.Ping(ctx, nil)
 	if err != nil {
-		log.Fatal("FFFFFFFFFFFFFFFFFFFFFF", err)
+		fmt.Printf("err.Error(): %v\n", err.Error())
 		return nil, err
 	}
-	fmt.Printf("client: %v\n", client)
 	return client, nil
 }

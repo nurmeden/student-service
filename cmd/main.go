@@ -16,7 +16,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 func main() {
@@ -33,12 +32,12 @@ func main() {
 	logger.SetOutput(logfile)
 	logger.SetLevel(logrus.DebugLevel)
 
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(".env"); err != nil {
 		log.Print("No .env file found")
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
+		Addr:     "localhost:6379",
 		Password: "",
 		DB:       0,
 	})
@@ -51,7 +50,11 @@ func main() {
 		logger.Fatal("Ошибка подключения к Redis:", err)
 	}
 
-	client, err := database.SetupDatabase()
+	dbName := os.Getenv("DATABASE_NAME")
+	mongoURI := os.Getenv("MONGODB_URI")
+	collectionName := os.Getenv("COLLECTION_NAME")
+
+	client, err := database.SetupDatabase(context.Background(), mongoURI)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -66,10 +69,7 @@ func main() {
 
 	prometheus.MustRegister(counter)
 
-	db_name := viper.GetString("DATABASE_NAME")
-	collection_name := viper.GetString("COLLECTION_NAME")
-
-	studentRepo, _ := repository.NewStudentRepository(client, db_name, collection_name, redisClient, logger)
+	studentRepo, _ := repository.NewStudentRepository(client, dbName, collectionName, redisClient, logger)
 
 	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger)
 

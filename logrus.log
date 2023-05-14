@@ -1,0 +1,2 @@
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp: lookup redis on 127.0.0.53:53: server misbehaving","time":"2023-05-14T10:39:53+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp: lookup redis on 127.0.0.53:53: server misbehaving","time":"2023-05-14T10:40:45+06:00"}
