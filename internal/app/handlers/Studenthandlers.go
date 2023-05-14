@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/nurmeden/students-service/internal/app/model"
 	"github.com/nurmeden/students-service/internal/app/usecase"
 	"github.com/sirupsen/logrus"
@@ -15,13 +16,17 @@ import (
 
 const endpoint = "http://localhost:8080/api/courses/"
 
+var blackListedTokens = make(map[string]bool)
+
 type StudentHandler struct {
 	studentUsecase usecase.StudentUsecase
+	logger         *logrus.Logger
 }
 
-func NewStudentHandler(studentUsecase usecase.StudentUsecase) *StudentHandler {
+func NewStudentHandler(studentUsecase usecase.StudentUsecase, logger *logrus.Logger) *StudentHandler {
 	return &StudentHandler{
 		studentUsecase: studentUsecase,
+		logger:         logger,
 	}
 }
 
@@ -46,6 +51,7 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 }
 
 func (h *StudentHandler) GetStudentByID(c *gin.Context) {
+	fmt.Printf("c.Request.URL: %v\n", c.Request.URL)
 	studentID := c.Param("id")
 	fmt.Printf("studentID: %v\n", studentID)
 
@@ -117,7 +123,14 @@ func (h *StudentHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": authResult.Token})
+	refreshToken := uuid.New().String()
+	err = h.studentUsecase.SaveRefreshToken(authResult.UserID, refreshToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save refresh token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": authResult.Token, "refresh_token": refreshToken})
 }
 
 func (sc *StudentHandler) GetStudentCourses(c *gin.Context) {
@@ -142,4 +155,40 @@ func (sc *StudentHandler) GetStudentCourses(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"courses": course})
+}
+
+func (h *StudentHandler) Logout(c *gin.Context) {
+	userID := c.GetString("user_id")                   // получаем ID пользователя из контекста Gin
+	err := h.studentUsecase.DeleteRefreshToken(userID) // удаляем refresh token из базы данных
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete refresh token"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
+}
+
+func (h *StudentHandler) RefreshToken(c *gin.Context) {
+	// Получаем refresh token из запроса
+	refreshToken := c.PostForm("refresh_token")
+	if refreshToken == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "refresh_token is missing"})
+		return
+	}
+
+	// Проверяем, что refresh token является действительным
+	userID, err := h.studentUsecase.ValidateRefreshToken(refreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid refresh_token"})
+		return
+	}
+
+	// Генерируем новый access token
+	token, err := h.studentUsecase.GenerateToken(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		return
+	}
+
+	// Отправляем новый access token в ответе
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }

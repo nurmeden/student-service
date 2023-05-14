@@ -16,7 +16,7 @@ func SetupDatabase(ctx context.Context, mongoURI string) (*mongo.Client, error) 
 		fmt.Printf("Failed to connect to MongoDB: %v", err)
 		return nil, err
 	}
-	err = client.Ping(ctx, nil)
+	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
 		return nil, err

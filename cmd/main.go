@@ -37,7 +37,7 @@ func main() {
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis:6379",
 		Password: "",
 		DB:       0,
 	})
@@ -53,12 +53,14 @@ func main() {
 	dbName := os.Getenv("DATABASE_NAME")
 	mongoURI := os.Getenv("MONGODB_URI")
 	collectionName := os.Getenv("COLLECTION_NAME")
+	fmt.Printf("mongoURI: %v\n", mongoURI)
 
 	client, err := database.SetupDatabase(context.Background(), mongoURI)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+	fmt.Printf("client: %v\n", client)
 
 	defer client.Disconnect(context.Background())
 
@@ -71,24 +73,31 @@ func main() {
 
 	studentRepo, _ := repository.NewStudentRepository(client, dbName, collectionName, redisClient, logger)
 
-	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger)
+	studentUsecase := usecase.NewStudentUsecase(*studentRepo, logger, redisClient)
 
-	studentHandler := handler.NewStudentHandler(studentUsecase)
+	studentHandler := handler.NewStudentHandler(studentUsecase, logger)
 
 	router := gin.Default()
 
 	api := router.Group("/api/")
 	{
-		api.POST("/students", studentHandler.CreateStudent)
-		api.GET("/students/:id", studentHandler.GetStudentByID)
-		api.PUT("/students/:id", studentHandler.UpdateStudents)
-		api.DELETE("/students/:id", studentHandler.DeleteStudent)
-		api.GET("/students/:id/courses", studentHandler.GetStudentCourses)
-		api.GET("/students/:id/students", studentHandler.GetStudentByCoursesID)
+		studentsGroup := api.Group("/students/")
+		studentsGroup.Use(handler.AuthMiddleware())
+		{
+			api.POST("/students/", studentHandler.CreateStudent)
+			api.GET("/students/:id", studentHandler.GetStudentByID)
+			api.PUT("/students/:id", studentHandler.UpdateStudents)
+			api.DELETE("/students/:id", studentHandler.DeleteStudent)
+			api.GET("/students/:id/courses", studentHandler.GetStudentCourses)
+			api.GET("/students/:id/students", studentHandler.GetStudentByCoursesID)
+
+		}
 		auth := api.Group("/auth/")
 		{
 			auth.POST("/sign-up", studentHandler.CreateStudent)
 			auth.POST("/sign-in", studentHandler.SignIn)
+			auth.POST("/logout", studentHandler.Logout)
+			auth.POST("/refresh-token", studentHandler.RefreshToken)
 		}
 	}
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))

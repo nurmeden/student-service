@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/nurmeden/students-service/internal/app/model"
@@ -158,4 +159,22 @@ func (r *StudentRepository) Delete(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to delete student: %v", err)
 	}
 	return nil
+}
+
+func (r *StudentRepository) GetByEmail(email string) (*model.Student, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"email": email}
+
+	var student model.Student
+	err := r.collection.FindOne(ctx, filter).Decode(&student)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return &student, nil
 }
