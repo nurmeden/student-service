@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/joho/godotenv"
 	"github.com/nurmeden/students-service/internal/database"
 	"github.com/sirupsen/logrus"
 )
@@ -24,6 +25,10 @@ func main() {
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	logger.SetOutput(logfile)
 	logger.SetLevel(logrus.DebugLevel)
+
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
 
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
