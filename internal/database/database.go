@@ -22,4 +22,6 @@ func SetupDatabase() (*mongo.Client, error) {
 		log.Fatal("FFFFFFFFFFFFFFFFFFFFFF", err)
 		return nil, err
 	}
+	fmt.Printf("client: %v\n", client)
+	return client, nil
 }
