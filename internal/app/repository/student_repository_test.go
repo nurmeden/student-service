@@ -89,14 +89,12 @@ func TestStudentRepository_Create(t *testing.T) {
 }
 
 func createTestDBConnection(t *testing.T) (*mongo.Client, *mongo.Collection) {
-	// Connect to MongoDB
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		t.Fatalf("Error connecting to MongoDB: %v", err)
 	}
 
-	// Create a new database and collection for testing
 	dbName := "testdb"
 	collName := "students"
 	err = client.Ping(ctx, nil)
