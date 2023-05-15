@@ -34,7 +34,7 @@ func NewStudentRepository(client *mongo.Client, dbName string, collectionName st
 	return r, nil
 }
 
-func (r *StudentRepository) Create(ctx context.Context, student *model.Student) (*model.Student, error) {
+func (r *StudentRepository) CreateStudent(ctx context.Context, student *model.Student) (*model.Student, error) {
 	r.logger.Infof("Creating new student: %+v", student)
 
 	err := r.client.Ping(ctx, nil)
@@ -47,12 +47,24 @@ func (r *StudentRepository) Create(ctx context.Context, student *model.Student) 
 		return nil, fmt.Errorf("failed to create student: %v", err)
 	}
 
+	studentJSON, err := json.Marshal(student)
+	if err != nil {
+		r.logger.Errorf("Failed to marshal student data for caching: %v", err)
+		return nil, err
+	}
+
+	err = r.cache.Set(student.ID, studentJSON, 0).Err()
+	if err != nil {
+		r.logger.Errorf("Failed to cache student data: %v", err)
+		return nil, err
+	}
+
 	r.logger.Infof("Student created successfully")
 
 	return student, nil
 }
 
-func (r *StudentRepository) Read(ctx context.Context, id string) (*model.Student, error) {
+func (r *StudentRepository) GetStudentByID(ctx context.Context, id string) (*model.Student, error) {
 	cachedResult, err := r.cache.Get(id).Result()
 	if err == nil {
 		student := &model.Student{}
@@ -136,7 +148,7 @@ func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string
 	return &student, nil
 }
 
-func (r *StudentRepository) Update(ctx context.Context, student *model.Student) (*model.Student, error) {
+func (r *StudentRepository) UpdateStudents(ctx context.Context, student *model.Student) (*model.Student, error) {
 	filter := bson.M{"_id": student.ID}
 	update := bson.M{"$set": bson.M{
 		"firstName": student.FirstName,
@@ -151,7 +163,6 @@ func (r *StudentRepository) Update(ctx context.Context, student *model.Student) 
 	return student, nil
 }
 
-// Delete - удаление студента по ID
 func (r *StudentRepository) Delete(ctx context.Context, id string) error {
 	filter := bson.M{"_id": id}
 	_, err := r.collection.DeleteOne(ctx, filter)

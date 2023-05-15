@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -43,14 +42,20 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&student)
 	if err != nil {
-		log.Println(err.Error())
+		h.logger.WithError(err).Error("Failed to decode request body")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to decode request body"})
+		return
+	}
+
+	if student.Password == "" || student.Email == "" {
+		h.logger.Error("Password or Email missing")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name or Email missing"})
 		return
 	}
 
 	createdStudent, err := h.studentUsecase.CreateStudent(context.Background(), &student)
 	if err != nil {
-		logrus.Errorf("Failed to create student: %s", err)
+		h.logger.WithError(err).Error("Failed to create student")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student"})
 		return
 	}

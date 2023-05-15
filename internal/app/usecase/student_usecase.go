@@ -58,11 +58,11 @@ func (u *studentUsecase) CreateStudent(ctx context.Context, student *model.Stude
 	}
 	student.Password = string(hashedPassword)
 
-	return u.studentRepo.Create(ctx, student)
+	return u.studentRepo.CreateStudent(ctx, student)
 }
 
 func (u *studentUsecase) GetStudentByID(ctx context.Context, id string) (*model.Student, error) {
-	return u.studentRepo.Read(ctx, id)
+	return u.studentRepo.GetStudentByID(ctx, id)
 }
 
 func (u *studentUsecase) GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error) {
@@ -70,12 +70,12 @@ func (u *studentUsecase) GetStudentByCoursesID(ctx context.Context, id string) (
 }
 
 func (u *studentUsecase) UpdateStudent(ctx context.Context, student_id string, student *model.Student) (*model.Student, error) {
-	student, err := u.studentRepo.Read(ctx, student_id)
+	student, err := u.studentRepo.GetStudentByID(ctx, student_id)
 	if err != nil {
 		return nil, err
 	}
 
-	return u.studentRepo.Update(ctx, student)
+	return u.studentRepo.UpdateStudents(ctx, student)
 }
 
 func (u *studentUsecase) DeleteStudent(ctx context.Context, id string) error {

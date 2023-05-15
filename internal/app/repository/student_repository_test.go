@@ -76,7 +76,7 @@ func TestStudentRepository_Create(t *testing.T) {
 				collection: tt.fields.collection,
 				cache:      tt.fields.cache,
 			}
-			got, err := r.Create(tt.args.ctx, tt.args.student)
+			got, err := r.CreateStudent(tt.args.ctx, tt.args.student)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("StudentRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return

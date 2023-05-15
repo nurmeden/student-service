@@ -87,15 +87,15 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api"
 	api := router.Group("/api/")
 	{
-		studentsGroup := api.Group("/students/")
+		studentsGroup := api.Group("/students")
 		studentsGroup.Use(handler.AuthMiddleware())
 		{
 			api.POST("/students/", studentHandler.CreateStudent)
 			api.GET("/students/:id", studentHandler.GetStudentByID)
-			api.PUT("/students/:id", studentHandler.UpdateStudents)
-			api.DELETE("/students/:id", studentHandler.DeleteStudent)
-			api.GET("/students/:id/courses", studentHandler.GetStudentCourses)
-			api.GET("/students/:id/students", studentHandler.GetStudentByCoursesID)
+			studentsGroup.PUT("/:id", studentHandler.UpdateStudents)
+			studentsGroup.DELETE("/:id", studentHandler.DeleteStudent)
+			studentsGroup.GET("/:id/courses", studentHandler.GetStudentCourses)
+			studentsGroup.GET("/:id/students", studentHandler.GetStudentByCoursesID)
 
 		}
 		auth := api.Group("/auth/")
