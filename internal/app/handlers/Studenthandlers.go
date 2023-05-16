@@ -38,10 +38,10 @@ func NewStudentHandler(studentUsecase usecase.StudentUsecase, logger *logrus.Log
 // @Router /api/students/ [post]
 // @Router /api/auth/sign-up/ [post]
 func (h *StudentHandler) CreateStudent(c *gin.Context) {
-	var student model.Student
-
+	var student *model.Student
 	err := c.ShouldBindJSON(&student)
 	if err != nil {
+		fmt.Printf("err.Error(): %v\n", err.Error())
 		h.logger.WithError(err).Error("Failed to decode request body")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to decode request body"})
 		return
@@ -53,7 +53,15 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 		return
 	}
 
-	createdStudent, err := h.studentUsecase.CreateStudent(context.Background(), &student)
+	fmt.Printf("student.Email: %v\n", student.Email)
+
+	studentByEmail := h.studentUsecase.GetByEmailForSignUp(context.Background(), student.Email)
+	if student.Email == studentByEmail.Email {
+		h.logger.WithError(err).Error("Failed to create student: Email the email exists")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student: Email the email exists"})
+		return
+	}
+	createdStudent, err := h.studentUsecase.CreateStudent(context.Background(), student)
 	if err != nil {
 		h.logger.WithError(err).Error("Failed to create student")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student"})
@@ -168,7 +176,7 @@ func (h *StudentHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	authResult, err := h.studentUsecase.SignIn(&signInData)
+	authResult, err := h.studentUsecase.SignIn(context.Background(), &signInData)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to authenticate"})
 		return

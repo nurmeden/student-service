@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
@@ -40,7 +41,7 @@ func Test_studentUsecase_SignIn(t *testing.T) {
 				jwtGenerator: tt.fields.jwtGenerator,
 				cache:        tt.fields.cache,
 			}
-			got, err := u.SignIn(tt.args.signInData)
+			got, err := u.SignIn(context.Background(), tt.args.signInData)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("studentUsecase.SignIn() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -20,11 +20,13 @@ type StudentUsecase interface {
 	GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error)
 	UpdateStudent(ctx context.Context, student_id string, student *model.Student) (*model.Student, error)
 	DeleteStudent(ctx context.Context, id string) error
-	SignIn(signInData *model.SignInData) (*model.AuthToken, error)
+	SignIn(ctx context.Context, signInData *model.SignInData) (*model.AuthToken, error)
 	SaveRefreshToken(userID string, refreshToken string) error
 	GenerateToken(studentID string) (string, error)
 	ValidateRefreshToken(refreshToken string) (string, error)
 	DeleteRefreshToken(userID string) error
+	GetByEmail(ctx context.Context, email string) (*model.Student, error)
+	GetByEmailForSignUp(ctx context.Context, email string) *model.Student
 }
 
 const jwtSecret = "dfhdfjhgdjkff"
@@ -82,11 +84,19 @@ func (u *studentUsecase) DeleteStudent(ctx context.Context, id string) error {
 	return u.studentRepo.Delete(ctx, id)
 }
 
-func (u *studentUsecase) SignIn(signInData *model.SignInData) (*model.AuthToken, error) {
-	student, err := u.studentRepo.GetByEmail(signInData.Email)
+func (u *studentUsecase) GetByEmail(ctx context.Context, email string) (*model.Student, error) {
+	return u.studentRepo.GetByEmail(ctx, email)
+}
+
+func (u *studentUsecase) GetByEmailForSignUp(ctx context.Context, email string) *model.Student {
+	return u.studentRepo.GetByEmailForSignUp(ctx, email)
+}
+
+func (u *studentUsecase) SignIn(ctx context.Context, signInData *model.SignInData) (*model.AuthToken, error) {
+	student, err := u.studentRepo.GetByEmail(ctx, signInData.Email)
 	if err != nil {
-		u.logger.Errorf("Error retrieving student with email %s: %v", signInData.Email, err)
-		return nil, err
+		u.logger.Errorf("Error retrieving student with email %s: %v", signInData.Email, nil)
+		return nil, nil
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(student.Password), []byte(signInData.Password))

@@ -36,7 +36,7 @@ func (m *MockStudentUsecase) DeleteStudent(ctx context.Context, id string) error
 	return args.Error(0)
 }
 
-func (m *MockStudentUsecase) SignIn(signInData *model.SignInData) (*model.AuthToken, error) {
+func (m *MockStudentUsecase) SignIn(ctx context.Context, signInData *model.SignInData) (*model.AuthToken, error) {
 	args := m.Called(signInData)
 	return args.Get(0).(*model.AuthToken), args.Error(1)
 }
@@ -59,4 +59,14 @@ func (m *MockStudentUsecase) ValidateRefreshToken(refreshToken string) (string, 
 func (m *MockStudentUsecase) DeleteRefreshToken(userID string) error {
 	args := m.Called(userID)
 	return args.Error(0)
+}
+
+func (m *MockStudentUsecase) GetByEmail(ctx context.Context, email string) (*model.Student, error) {
+	args := m.Called(email)
+	return args.Get(0).(*model.Student), args.Error(0)
+}
+
+func (m *MockStudentUsecase) GetByEmailForSignUp(ctx context.Context, email string) *model.Student {
+	args := m.Called(email)
+	return args.Get(0).(*model.Student)
 }

@@ -96,7 +96,6 @@ func main() {
 			studentsGroup.DELETE("/:id", studentHandler.DeleteStudent)
 			studentsGroup.GET("/:id/courses", studentHandler.GetStudentCourses)
 			studentsGroup.GET("/:id/students", studentHandler.GetStudentByCoursesID)
-
 		}
 		auth := api.Group("/auth/")
 		{
