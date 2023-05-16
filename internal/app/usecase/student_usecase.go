@@ -26,7 +26,7 @@ type StudentUsecase interface {
 	ValidateRefreshToken(refreshToken string) (string, error)
 	DeleteRefreshToken(userID string) error
 	GetByEmail(ctx context.Context, email string) (*model.Student, error)
-	GetByEmailForSignUp(ctx context.Context, email string) *model.Student
+	CheckEmailExistence(ctx context.Context, email string) (bool, error)
 }
 
 const jwtSecret = "dfhdfjhgdjkff"
@@ -88,8 +88,8 @@ func (u *studentUsecase) GetByEmail(ctx context.Context, email string) (*model.S
 	return u.studentRepo.GetByEmail(ctx, email)
 }
 
-func (u *studentUsecase) GetByEmailForSignUp(ctx context.Context, email string) *model.Student {
-	return u.studentRepo.GetByEmailForSignUp(ctx, email)
+func (u *studentUsecase) CheckEmailExistence(ctx context.Context, email string) (bool, error) {
+	return u.studentRepo.CheckEmailExistence(ctx, email)
 }
 
 func (u *studentUsecase) SignIn(ctx context.Context, signInData *model.SignInData) (*model.AuthToken, error) {

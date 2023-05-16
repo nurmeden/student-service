@@ -46,18 +46,21 @@ func main() {
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
+		Addr:     "localhost:6380",
 		Password: "",
 		DB:       0,
 	})
 
 	defer redisClient.Close()
 
-	_, err = redisClient.Ping().Result()
+	ll, err := redisClient.Ping().Result()
+	fmt.Println(ll)
 	if err != nil {
 		fmt.Println(err.Error())
 		logger.Fatal("Ошибка подключения к Redis:", err)
 	}
+
+	fmt.Println(ll)
 
 	// dbName := os.Getenv("DATABASE_NAME")
 	mongoURI := os.Getenv("MONGODB_URI")

@@ -187,18 +187,13 @@ func (r *StudentRepository) GetByEmail(ctx context.Context, email string) (*mode
 	return &student, nil
 }
 
-func (r *StudentRepository) GetByEmailForSignUp(ctx context.Context, email string) *model.Student {
+func (r *StudentRepository) CheckEmailExistence(ctx context.Context, email string) (bool, error) {
 	filter := bson.M{"email": email}
 
-	var student model.Student
-	err := r.collection.FindOne(ctx, filter).Decode(&student)
+	count, err := r.collection.CountDocuments(ctx, filter)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil
-		}
-		return nil
+		return false, err
 	}
-	fmt.Printf("student: %v\n", student)
 
-	return &student
+	return count > 0, nil
 }

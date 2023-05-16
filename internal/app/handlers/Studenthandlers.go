@@ -55,12 +55,18 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 
 	fmt.Printf("student.Email: %v\n", student.Email)
 
-	studentByEmail := h.studentUsecase.GetByEmailForSignUp(context.Background(), student.Email)
-	if student.Email == studentByEmail.Email {
-		h.logger.WithError(err).Error("Failed to create student: Email the email exists")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student: Email the email exists"})
+	exists, err := h.studentUsecase.CheckEmailExistence(context.Background(), student.Email)
+	if err != nil {
+		h.logger.WithError(err).Error("Failed to check email existence")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student"})
 		return
 	}
+	if exists {
+		h.logger.Error("Email already exists")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email already exists"})
+		return
+	}
+
 	createdStudent, err := h.studentUsecase.CreateStudent(context.Background(), student)
 	if err != nil {
 		h.logger.WithError(err).Error("Failed to create student")

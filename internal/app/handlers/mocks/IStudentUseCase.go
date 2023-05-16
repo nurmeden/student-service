@@ -66,7 +66,7 @@ func (m *MockStudentUsecase) GetByEmail(ctx context.Context, email string) (*mod
 	return args.Get(0).(*model.Student), args.Error(0)
 }
 
-func (m *MockStudentUsecase) GetByEmailForSignUp(ctx context.Context, email string) *model.Student {
-	args := m.Called(email)
-	return args.Get(0).(*model.Student)
+func (m *MockStudentUsecase) CheckEmailExistence(ctx context.Context, email string) (bool, error) {
+	args := m.Called(ctx, email)
+	return args.Bool(0), args.Error(1)
 }
