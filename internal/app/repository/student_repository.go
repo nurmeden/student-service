@@ -153,6 +153,8 @@ func (r *StudentRepository) UpdateStudents(ctx context.Context, student *model.S
 		"firstName": student.FirstName,
 		"lastName":  student.LastName,
 		"age":       student.Age,
+		"courses":   student.Courses,
+		"password":  student.Password,
 	}}
 	_, err := r.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
