@@ -114,20 +114,20 @@ func (h *StudentHandler) GetStudentByID(c *gin.Context) {
 // @Router /students/{id} [put]
 func (h *StudentHandler) UpdateStudents(c *gin.Context) {
 	studentID := c.Param("id")
-
+	fmt.Printf("studentID: %v\n", studentID)
 	var studentUpdateInput model.Student
-
 	if err := c.ShouldBindJSON(&studentUpdateInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Printf("studentUpdateInput: %v\n", studentUpdateInput)
 
 	student, err := h.studentUsecase.UpdateStudent(context.Background(), studentID, &studentUpdateInput)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
+	fmt.Printf("studentUpdate: %v\n", student)
 	c.JSON(http.StatusOK, gin.H{"data": student})
 }
 

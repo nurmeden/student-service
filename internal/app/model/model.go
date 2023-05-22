@@ -1,15 +1,19 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Student struct {
-	ID        string   `bson:"_id,omitempty"`
-	FirstName string   `bson:"firstName"`
-	LastName  string   `bson:"lastName"`
-	Password  string   `bson:"password"`
-	Email     string   `json:"email"`
-	Age       string   `bson:"age"`
-	Courses   []string `json:"courses"`
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	FirstName string             `bson:"firstName" json:"firstName"`
+	LastName  string             `json:"lastName"`
+	Password  string             `json:"password"`
+	Email     string             `json:"email"`
+	Age       string             `json:"age"`
+	Courses   []string           `bson:"courses" json:"courses"`
 }
 
 type SignInData struct {

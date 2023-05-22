@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type StudentRepository struct {
@@ -51,8 +52,8 @@ func (r *StudentRepository) CreateStudent(ctx context.Context, student *model.St
 		r.logger.Errorf("Failed to marshal student data for caching: %v", err)
 		return nil, err
 	}
-
-	err = r.cache.Set(student.ID, studentJSON, 0).Err()
+	idStr := student.ID.Hex()
+	err = r.cache.Set(idStr, studentJSON, 0).Err()
 	if err != nil {
 		r.logger.Errorf("Failed to cache student data: %v", err)
 		return nil, err
@@ -147,21 +148,34 @@ func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string
 	return &student, nil
 }
 
-func (r *StudentRepository) UpdateStudents(ctx context.Context, student *model.Student) (*model.Student, error) {
-	filter := bson.M{"_id": student.ID}
+func (r *StudentRepository) UpdateStudents(ctx context.Context, student *model.Student, studentID primitive.ObjectID) (*model.Student, error) {
+	filter := bson.M{"_id": studentID}
 	update := bson.M{"$set": bson.M{
 		"firstName": student.FirstName,
 		"lastName":  student.LastName,
 		"age":       student.Age,
 		"courses":   student.Courses,
-		"password":  student.Password,
 	}}
-	_, err := r.collection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		r.logger.Errorf("failed to update student: %v", err)
-		return nil, fmt.Errorf("failed to update student: %v", err)
+	fmt.Printf("student.Courses: %v\n", student.Courses)
+	fmt.Printf("student.ID: %v\n", studentID)
+
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	result := r.collection.FindOneAndUpdate(ctx, filter, update, opts)
+	if err := result.Err(); err != nil {
+		fmt.Printf("err.Error(): %v\n", err.Error())
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("student not found")
+		}
+		return nil, err
 	}
-	return student, nil
+
+	var updatedStudent *model.Student
+	if err := result.Decode(&updatedStudent); err != nil {
+		return nil, err
+	}
+
+	return updatedStudent, nil
 }
 
 func (r *StudentRepository) Delete(ctx context.Context, id string) error {

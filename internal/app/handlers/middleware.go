@@ -2,8 +2,9 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"net/http"
-	"os"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -17,17 +18,18 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
 			return
 		}
-
-		// Parse the token
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Check the signing method
+		tokens := strings.Split(tokenString, " ")
+		fmt.Printf("tokens: %v\n", tokens)
+		token, err := jwt.Parse(tokens[1], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
 			// Get the secret key from the environment variable
-			return []byte(os.Getenv("SECRET_KEY")), nil
+			return []byte("dfhdfjhgdjkff"), nil
 		})
 		if err != nil {
+			log.Println("1")
+			log.Println(err.Error())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			return
 		}
@@ -36,6 +38,8 @@ func AuthMiddleware() gin.HandlerFunc {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			userID, ok := claims["userID"].(string)
 			if !ok {
+				log.Println("2")
+				log.Println(err.Error())
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 				return
 			}
@@ -44,7 +48,8 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Next()
 			return
 		}
-
+		log.Println("3")
+		log.Println(err.Error())
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
 	}

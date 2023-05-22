@@ -29,7 +29,6 @@ import (
 // @BasePath /api/
 func main() {
 	logfile, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,13 +45,13 @@ func main() {
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6380",
+		Addr:     "redis:6379",
 		Password: "",
 		DB:       0,
 	})
 
 	defer redisClient.Close()
-
+	fmt.Printf("redisClient: %v\n", redisClient)
 	ll, err := redisClient.Ping().Result()
 	fmt.Println(ll)
 	if err != nil {

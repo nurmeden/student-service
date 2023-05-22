@@ -6,3 +6,17 @@
 {"level":"info","msg":"Creating new student: \u0026{ID: FirstName: LastName: Password:$2a$10$b9Ri57jVTcYlYaVyPaYrNOiaYfeIlaHaQ44Q53meyorIsl/ZNavWq Email:nurmeden.02@gmail.com Age: Courses:[]}","time":"2023-05-16T16:35:00+06:00"}
 {"level":"info","msg":"Student created successfully","time":"2023-05-16T16:35:00+06:00"}
 {"level":"error","msg":"Email already exists","time":"2023-05-16T16:35:02+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-22T19:52:44+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-22T19:53:18+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-22T19:54:57+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-22T19:56:49+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-22T19:57:33+06:00"}
+{"level":"error","msg":"Email already exists","time":"2023-05-22T19:59:05+06:00"}
+{"level":"error","msg":"Course not found: mongo: no documents in result","time":"2023-05-22T20:07:05+06:00"}
+{"level":"error","msg":"Course not found: mongo: no documents in result","time":"2023-05-22T20:07:58+06:00"}
+{"level":"error","msg":"Course not found: mongo: no documents in result","time":"2023-05-22T20:10:23+06:00"}
+{"level":"error","msg":"Student not found: mongo: no documents in result","time":"2023-05-22T20:13:00+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$8qFoCm4aSTwSnP0a4UWSFOCLQ7VxyI.c9r6MIgvwbe1GRR/BBPv1K Email:nurmeden.02@gmail.com Age: Courses:[]}","time":"2023-05-23T00:28:06+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T00:28:06+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$0LEdPhyQ0YiLNWbxWCiVrOFDI2bbBach/WEQBnl20U4i4NsGHwkR6 Email:nurmeden.02@gmail.com Age: Courses:[]}","time":"2023-05-23T00:35:07+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T00:35:07+06:00"}

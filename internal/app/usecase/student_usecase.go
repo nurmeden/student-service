@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -72,12 +73,13 @@ func (u *studentUsecase) GetStudentByCoursesID(ctx context.Context, id string) (
 }
 
 func (u *studentUsecase) UpdateStudent(ctx context.Context, student_id string, student *model.Student) (*model.Student, error) {
-	student, err := u.studentRepo.GetStudentByID(ctx, student_id)
+	studentforID, err := u.studentRepo.GetStudentByID(ctx, student_id)
 	if err != nil {
 		return nil, err
 	}
-
-	return u.studentRepo.UpdateStudents(ctx, student)
+	fmt.Printf("studentforID.ID: %v\n", studentforID.ID)
+	fmt.Printf("student in the usecase 2: %v\n", student)
+	return u.studentRepo.UpdateStudents(ctx, student, studentforID.ID)
 }
 
 func (u *studentUsecase) DeleteStudent(ctx context.Context, id string) error {
@@ -104,13 +106,14 @@ func (u *studentUsecase) SignIn(ctx context.Context, signInData *model.SignInDat
 		u.logger.Errorf("Incorrect password for student with email %s", signInData.Email)
 		return nil, err
 	}
-	token, err := u.GenerateToken(student.ID)
+	idStr := student.ID.Hex()
+	token, err := u.GenerateToken(idStr)
 	if err != nil {
 		return nil, err
 	}
 
 	authToken := &model.AuthToken{
-		UserID:    student.ID,
+		UserID:    idStr,
 		Token:     token,
 		ExpiresAt: time.Now().Add(time.Hour * 1),
 	}
@@ -127,7 +130,7 @@ func (uc *studentUsecase) GenerateToken(studentID string) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["userID"] = studentID
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
-	tokenString, err := token.SignedString([]byte("your-secret-key"))
+	tokenString, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
 		return "", err
 	}
@@ -152,7 +155,6 @@ func (u *studentUsecase) ValidateRefreshToken(refreshToken string) (string, erro
 		}
 		return []byte(os.Getenv("REFRESH_SECRET")), nil
 	})
-
 	if err != nil {
 		return "", err
 	}
