@@ -35,8 +35,8 @@ func NewStudentHandler(studentUsecase usecase.StudentUsecase, logger *logrus.Log
 // @Produce  json
 // @Param student body model.Student true "Student data"
 // @Success 201 {object} model.Student
-// @Router /api/students/ [post]
-// @Router /api/auth/sign-up/ [post]
+// @Router /students/ [post]
+// @Router /auth/sign-up/ [post]
 func (h *StudentHandler) CreateStudent(c *gin.Context) {
 	var student *model.Student
 	err := c.ShouldBindJSON(&student)
