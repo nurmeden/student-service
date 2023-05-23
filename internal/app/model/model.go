@@ -9,10 +9,10 @@ import (
 type Student struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
 	FirstName string             `bson:"firstName" json:"firstName"`
-	LastName  string             `json:"lastName"`
+	LastName  string             `json:"lastName" json:"lastName"`
 	Password  string             `json:"password"`
 	Email     string             `json:"email"`
-	Age       string             `json:"age"`
+	Age       string             `json:"age" json:"age"`
 	Courses   []string           `bson:"courses" json:"courses"`
 }
 
@@ -35,5 +35,5 @@ type Course struct {
 }
 
 type CourseResponse struct {
-	CourseData Course `json:"data"`
+	CourseData []Course `json:"data"`
 }

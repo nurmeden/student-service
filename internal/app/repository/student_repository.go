@@ -41,19 +41,24 @@ func (r *StudentRepository) CreateStudent(ctx context.Context, student *model.St
 	if err != nil {
 		return nil, fmt.Errorf("failed to ping MongoDB: %v", err)
 	}
-	_, err = r.collection.InsertOne(ctx, student)
+	result, err := r.collection.InsertOne(ctx, student)
 	if err != nil {
 		r.logger.Errorf("Failed to create student: %v", err)
 		return nil, fmt.Errorf("failed to create student: %v", err)
 	}
+	insertedID, ok := result.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return nil, fmt.Errorf("failed to convert InsertedID to ObjectID")
+	}
+	insertedIDStr := insertedID.Hex()
 
 	studentJSON, err := json.Marshal(student)
 	if err != nil {
 		r.logger.Errorf("Failed to marshal student data for caching: %v", err)
 		return nil, err
 	}
-	idStr := student.ID.Hex()
-	err = r.cache.Set(idStr, studentJSON, 0).Err()
+
+	err = r.cache.Set(insertedIDStr, studentJSON, 0).Err()
 	if err != nil {
 		r.logger.Errorf("Failed to cache student data: %v", err)
 		return nil, err
@@ -111,38 +116,35 @@ func (r *StudentRepository) GetStudentByID(ctx context.Context, id string) (*mod
 }
 
 func (r *StudentRepository) GetStudentsByCourseID(ctx context.Context, id string) ([]*model.Student, error) {
-	// cachedResult, err := r.cache.Get(id).Result()
-	// fmt.Printf("id in the course id: %v\n", id)
-	// if err == nil {
-	// 	students := []*model.Student{}
-	// 	fmt.Printf("students in the err: %v\n", students)
-	// 	err = json.Unmarshal([]byte(cachedResult), &students)
-	// 	if err != nil {
-	// 		r.logger.Errorf("Error unmarshalling cached result for students with course ID %s: %s", id, err)
-	// 		return nil, err
-	// 	}
-	// 	return students, nil
-	// }
+	cachedResult, err := r.cache.Get(id).Result()
+	fmt.Printf("id in the course id: %v\n", id)
+	if err == nil {
+		students := []*model.Student{}
+		fmt.Printf("students in the err: %v\n", students)
+		err = json.Unmarshal([]byte(cachedResult), &students)
+		if err != nil {
+			r.logger.Errorf("Error unmarshalling cached result for students with course ID %s: %s", id, err)
+			return nil, err
+		}
+		return students, nil
+	}
 
 	var students []*model.Student
-	objID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("objID: %v\n", objID)
-	filter := bson.M{"courses": objID}
+
+	filter := bson.M{"courses": bson.M{"$in": []string{id}}}
 	cursor, err := r.collection.Find(ctx, filter)
+	fmt.Printf("cursor: %v\n", cursor)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query students: %v", err)
 	}
 	defer cursor.Close(ctx)
-
 	for cursor.Next(ctx) {
 		var student model.Student
 		if err := cursor.Decode(&student); err != nil {
 			r.logger.Errorf("Error decoding student: %s", err)
 			continue
 		}
+		fmt.Printf("student following: %v\n", student)
 		students = append(students, &student)
 	}
 	fmt.Printf("students: %v\n", students)

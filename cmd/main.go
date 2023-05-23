@@ -45,7 +45,7 @@ func main() {
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "localhost:6380",
 		Password: "",
 		DB:       0,
 	})
@@ -110,5 +110,5 @@ func main() {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	router.Run(":8000")
+	router.Run(":8001")
 }

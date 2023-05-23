@@ -32,3 +32,45 @@
 {"level":"info","msg":"Student with id 646ccc21e14e3dab4d455124 not found in database","time":"2023-05-23T21:22:39+06:00"}
 {"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T21:23:58+06:00"}
 {"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T21:26:02+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-23T21:46:54+06:00"}
+{"level":"info","msg":"No students found for course ID a94c3ce5-43dd-4443-862d-caeefb45767a in database","time":"2023-05-23T21:50:49+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:00:23+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:00:35+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:01:15+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:02:52+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:05:48+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:06:47+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:17:40+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:19:32+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:22:29+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T22:29:18+06:00"}
+{"level":"error","msg":"Email already exists","time":"2023-05-23T23:26:25+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$89/o6S/dC8Bct2Lhs7mdw.k1hM4KOJyPfp0h/KuPuhHGpJo4VIZg6 Email:anuar.02@gmail.com Age: Courses:[]}","time":"2023-05-23T23:26:39+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:26:39+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$HIjTX3fsIk00Gv9vYmPJE.G6jIJxTsU6Ynt5Y7pN9eMiVV3wNCaIu Email:mirat.04@gmail.com Age: Courses:[]}","time":"2023-05-23T23:41:16+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:41:16+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$FIVGCW8ghv1Iyd35kR33pedQld05RBmMuhB1X41MQ3Po6jgF04.4G Email:ghsdfhsdfhd.04@gmail.com Age: Courses:[]}","time":"2023-05-23T23:43:57+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:43:57+06:00"}
+{"level":"error","msg":"Email already exists","time":"2023-05-23T23:44:49+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$0LkqhevI5/WQlOn7wZzI0uv/NICTYo9/iCim1FN8q1QkdHA943GxC Email:dfhdfh.04@gmail.com Age: Courses:[]}","time":"2023-05-23T23:44:55+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:44:55+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$/ffzQrkz5WoV1Ajfk31Jg.jaxCy9SwF4U/EHxSxg.WOLRHfD9/9Ga Email:anuar.2002@inbox.ru Age: Courses:[]}","time":"2023-05-23T23:47:38+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:47:38+06:00"}
+{"level":"error","msg":"Email already exists","time":"2023-05-23T23:54:52+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$LjwTFcKKs8oxnEq3rJnpkO3J6UCFeM1frRsZt6gbCdh/jJ8kqFApO Email:anuarselbayev.2002@inbox.ru Age: Courses:[]}","time":"2023-05-23T23:55:01+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:55:01+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$PVxVmYsCQcbHYDuIlbAHb.IFV1FvIXOae2vq.rt.oAKZt2n.KT.2W Email:anuarselbayeva.2002@inbox.ru Age: Courses:[]}","time":"2023-05-23T23:58:02+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:58:02+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$ZTxV5UXpswgbBVzG//9mbe5aqaaXqErC7WvYYclKEgZy1pR2C1Ce6 Email:anuarselbayevaa.2002@inbox.ru Age: Courses:[]}","time":"2023-05-23T23:58:54+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:58:54+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$BqZRUW0ICLvInqbkai0T0.z9coEnQYQCZ.XfvXmtl7Swx7xCxpWtm Email:anuarselbayevaa04.2002@inbox.ru Age: Courses:[]}","time":"2023-05-23T23:59:35+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T23:59:35+06:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-24T00:04:48+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$O/8UKtTA1KdTJdSMYeEZ9.39WA9BH1fWXZU.4XLnbmvQiMSBGBBxe Email:anvarkz.2002@inbox.ru Age: Courses:[]}","time":"2023-05-24T00:05:31+06:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-24T00:05:31+06:00"}
+{"level":"error","msg":"Error retrieving student with email nurmeden.2002@inbox.ru: \u003cnil\u003e","time":"2023-05-24T00:07:06+06:00"}
+{"level":"error","msg":"Error retrieving student with email nurmeden.2002@gmail.com: \u003cnil\u003e","time":"2023-05-24T00:07:24+06:00"}
+{"level":"error","msg":"Error retrieving student with email nurmeden.2002@gmail.com: \u003cnil\u003e","time":"2023-05-24T00:07:38+06:00"}
+{"level":"info","msg":"No students found for course ID 3289135b-8b39-4c8a-9243-ac3cc2589879 in database","time":"2023-05-24T00:49:35+06:00"}
+{"level":"info","msg":"No students found for course ID 71bd0bf4-d895-46a1-99b5-f059652adfec in database","time":"2023-05-24T00:57:11+06:00"}
+{"level":"info","msg":"No students found for course ID 71bd0bf4-d895-46a1-99b5-f059652adfec in database","time":"2023-05-24T02:18:16+06:00"}
