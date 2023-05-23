@@ -28,3 +28,7 @@
 {"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-23T13:54:07+05:00"}
 {"level":"info","msg":"Student with coursesId 768b41d4-5be8-4422-bd0b-ab7f23db3c9c not found in database","time":"2023-05-23T14:00:07+05:00"}
 {"level":"info","msg":"Student with coursesId 768b41d4-5be8-4422-bd0b-ab7f23db3c9c not found in database","time":"2023-05-23T14:00:23+05:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp: lookup redis on 127.0.0.53:53: server misbehaving","time":"2023-05-23T21:20:57+06:00"}
+{"level":"info","msg":"Student with id 646ccc21e14e3dab4d455124 not found in database","time":"2023-05-23T21:22:39+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T21:23:58+06:00"}
+{"level":"info","msg":"No students found for course ID 646ccc21e14e3dab4d455124 in database","time":"2023-05-23T21:26:02+06:00"}

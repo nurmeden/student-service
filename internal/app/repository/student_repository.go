@@ -110,43 +110,65 @@ func (r *StudentRepository) GetStudentByID(ctx context.Context, id string) (*mod
 	return &student, nil
 }
 
-func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error) {
-	cachedResult, err := r.cache.Get(id).Result()
-	fmt.Printf("id: %v\n", id)
-	if err == nil {
-		student := &model.Student{}
-		err = json.Unmarshal([]byte(cachedResult), student)
-		if err != nil {
-			r.logger.Errorf("Error unmarshalling cached result for student with course ID %s: %s", id, err)
-			return nil, err
+func (r *StudentRepository) GetStudentsByCourseID(ctx context.Context, id string) ([]*model.Student, error) {
+	// cachedResult, err := r.cache.Get(id).Result()
+	// fmt.Printf("id in the course id: %v\n", id)
+	// if err == nil {
+	// 	students := []*model.Student{}
+	// 	fmt.Printf("students in the err: %v\n", students)
+	// 	err = json.Unmarshal([]byte(cachedResult), &students)
+	// 	if err != nil {
+	// 		r.logger.Errorf("Error unmarshalling cached result for students with course ID %s: %s", id, err)
+	// 		return nil, err
+	// 	}
+	// 	return students, nil
+	// }
+
+	var students []*model.Student
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("objID: %v\n", objID)
+	filter := bson.M{"courses": objID}
+	cursor, err := r.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query students: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var student model.Student
+		if err := cursor.Decode(&student); err != nil {
+			r.logger.Errorf("Error decoding student: %s", err)
+			continue
 		}
-		return student, nil
+		students = append(students, &student)
+	}
+	fmt.Printf("students: %v\n", students)
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor error: %v", err)
 	}
 
-	var student model.Student
-	fmt.Printf("id: %v\n", id)
-	filter := bson.M{"courses": id}
-	err = r.collection.FindOne(ctx, filter).Decode(&student)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			r.logger.Infof("Student with coursesId %s not found in database", id)
-			return nil, nil // Если студент не найден, возвращаем nil и ошибку nil
-		}
-		return nil, fmt.Errorf("failed to read student: %v", err)
+	if len(students) == 0 {
+		r.logger.Infof("No students found for course ID %s in database", id)
+		return nil, nil
 	}
 
-	studentJSON, err := json.Marshal(student)
+	studentsJSON, err := json.Marshal(students)
 	if err != nil {
-		r.logger.Errorf("Failed to marshal student data for caching: %v", err)
+		r.logger.Errorf("Failed to marshal students data for caching: %v", err)
 		return nil, err
 	}
 
-	err = r.cache.Set(id, studentJSON, 0).Err()
+	err = r.cache.Set(id, studentsJSON, 0).Err()
 	if err != nil {
-		r.logger.Errorf("Failed to cache student data: %v", err)
+		r.logger.Errorf("Failed to cache students data: %v", err)
 		return nil, err
 	}
-	return &student, nil
+
+	return students, nil
 }
 
 func (r *StudentRepository) UpdateStudents(ctx context.Context, student *model.Student, studentID primitive.ObjectID) (*model.Student, error) {
@@ -174,6 +196,16 @@ func (r *StudentRepository) UpdateStudents(ctx context.Context, student *model.S
 	var updatedStudent *model.Student
 	if err := result.Decode(&updatedStudent); err != nil {
 		return nil, err
+	}
+
+	studentJSON, err := json.Marshal(updatedStudent)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.cache.Set(studentID.Hex(), studentJSON, 0).Err()
+	if err != nil {
+		fmt.Printf("Failed to update student data in Redis: %v\n", err)
 	}
 
 	return updatedStudent, nil

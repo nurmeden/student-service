@@ -151,17 +151,22 @@ func (h *StudentHandler) DeleteStudent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Студент успешно удален"})
 }
 
-func (h *StudentHandler) GetStudentByCoursesID(c *gin.Context) {
+func (h *StudentHandler) GetStudentsByCourseID(c *gin.Context) {
 	courseID := c.Param("id")
-	fmt.Printf("courseID: %v\n", courseID)
-	student, err := h.studentUsecase.GetStudentByCoursesID(context.Background(), courseID)
+
+	students, err := h.studentUsecase.GetStudentsByCourseID(context.Background(), courseID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		h.logger.WithError(err).Error("Failed to get students by course ID")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get students by course ID"})
 		return
 	}
-	fmt.Printf("student get by id: %v\n", student)
 
-	c.JSON(http.StatusOK, student)
+	if students == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No students found for course ID"})
+		return
+	}
+
+	c.JSON(http.StatusOK, students)
 }
 
 // SignIn godoc

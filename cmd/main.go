@@ -97,7 +97,7 @@ func main() {
 			studentsGroup.PUT("/:id", studentHandler.UpdateStudents)
 			studentsGroup.DELETE("/:id", studentHandler.DeleteStudent)
 			studentsGroup.GET("/:id/courses", studentHandler.GetStudentCourses)
-			studentsGroup.GET("/:id/students", studentHandler.GetStudentByCoursesID)
+			studentsGroup.GET("/:id/students", studentHandler.GetStudentsByCourseID)
 		}
 		auth := api.Group("/auth/")
 		{
