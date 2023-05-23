@@ -66,7 +66,7 @@ func (h *StudentHandler) CreateStudent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Email already exists"})
 		return
 	}
-
+	fmt.Printf("exists: %v\n", exists)
 	createdStudent, err := h.studentUsecase.CreateStudent(context.Background(), student)
 	if err != nil {
 		h.logger.WithError(err).Error("Failed to create student")
@@ -200,7 +200,7 @@ func (h *StudentHandler) SignIn(c *gin.Context) {
 
 func (sc *StudentHandler) GetStudentCourses(c *gin.Context) {
 	studentID := c.Param("id")
-
+	fmt.Printf("studentID: %v\n", studentID)
 	resp, err := http.Get(endpoint + studentID + "/courses")
 	fmt.Printf("resp: %v\n", resp)
 	if err != nil {

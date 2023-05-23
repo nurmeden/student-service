@@ -20,3 +20,11 @@
 {"level":"info","msg":"Student created successfully","time":"2023-05-23T00:28:06+06:00"}
 {"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName: LastName: Password:$2a$10$0LEdPhyQ0YiLNWbxWCiVrOFDI2bbBach/WEQBnl20U4i4NsGHwkR6 Email:nurmeden.02@gmail.com Age: Courses:[]}","time":"2023-05-23T00:35:07+06:00"}
 {"level":"info","msg":"Student created successfully","time":"2023-05-23T00:35:07+06:00"}
+{"level":"info","msg":"Creating new student: \u0026{ID:ObjectID(\"000000000000000000000000\") FirstName:Dulat LastName: Password:$2a$10$I/W084BySfGmzX/HxT/RmeZAUTjEWM1Bt5kgtUxQrStWRWwET1d/e Email:nurmeden.02@gmail.com Age: Courses:[]}","time":"2023-05-23T12:56:25+05:00"}
+{"level":"info","msg":"Student created successfully","time":"2023-05-23T12:56:26+05:00"}
+{"level":"info","msg":"Student with coursesId 646c71a9d2c283bbea4967c6 not found in database","time":"2023-05-23T13:45:07+05:00"}
+{"level":"error","msg":"Failed to cache student data: dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-23T13:45:26+05:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-23T13:49:56+05:00"}
+{"level":"fatal","msg":"Ошибка подключения к Redis:dial tcp 127.0.0.1:6379: connect: connection refused","time":"2023-05-23T13:54:07+05:00"}
+{"level":"info","msg":"Student with coursesId 768b41d4-5be8-4422-bd0b-ab7f23db3c9c not found in database","time":"2023-05-23T14:00:07+05:00"}
+{"level":"info","msg":"Student with coursesId 768b41d4-5be8-4422-bd0b-ab7f23db3c9c not found in database","time":"2023-05-23T14:00:23+05:00"}

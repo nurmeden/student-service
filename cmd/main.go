@@ -45,7 +45,7 @@ func main() {
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
+		Addr:     "localhost:6379",
 		Password: "",
 		DB:       0,
 	})
@@ -61,11 +61,11 @@ func main() {
 
 	fmt.Println(ll)
 
-	// dbName := os.Getenv("DATABASE_NAME")
-	mongoURI := os.Getenv("MONGODB_URI")
-	// collectionName := os.Getenv("COLLECTION_NAME")
+	// // dbName := os.Getenv("DATABASE_NAME")
+	// mongoURI := os.Getenv("MONGODB_URI")
+	// // collectionName := os.Getenv("COLLECTION_NAME")
 
-	client, err := database.SetupDatabase(context.Background(), mongoURI)
+	client, err := database.SetupDatabase(context.Background())
 	if err != nil {
 		fmt.Println(err.Error())
 		return

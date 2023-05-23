@@ -112,6 +112,7 @@ func (r *StudentRepository) GetStudentByID(ctx context.Context, id string) (*mod
 
 func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string) (*model.Student, error) {
 	cachedResult, err := r.cache.Get(id).Result()
+	fmt.Printf("id: %v\n", id)
 	if err == nil {
 		student := &model.Student{}
 		err = json.Unmarshal([]byte(cachedResult), student)
@@ -123,7 +124,7 @@ func (r *StudentRepository) GetStudentByCoursesID(ctx context.Context, id string
 	}
 
 	var student model.Student
-
+	fmt.Printf("id: %v\n", id)
 	filter := bson.M{"courses": id}
 	err = r.collection.FindOne(ctx, filter).Decode(&student)
 	if err != nil {
