@@ -45,7 +45,7 @@ func main() {
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6380",
+		Addr:     "localhost:6379",
 		Password: "",
 		DB:       0,
 	})
@@ -89,15 +89,15 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api"
 	api := router.Group("/api/")
 	{
+		api.POST("/students/", studentHandler.CreateStudent)
+		api.GET("/students/:id", studentHandler.GetStudentByID)
+		api.GET("/students/:id/students", studentHandler.GetStudentsByCourseID)
 		studentsGroup := api.Group("/students")
 		studentsGroup.Use(handler.AuthMiddleware())
 		{
-			api.POST("/students/", studentHandler.CreateStudent)
-			api.GET("/students/:id", studentHandler.GetStudentByID)
 			studentsGroup.PUT("/:id", studentHandler.UpdateStudents)
 			studentsGroup.DELETE("/:id", studentHandler.DeleteStudent)
 			studentsGroup.GET("/:id/courses", studentHandler.GetStudentCourses)
-			studentsGroup.GET("/:id/students", studentHandler.GetStudentsByCourseID)
 		}
 		auth := api.Group("/auth/")
 		{
