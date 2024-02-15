@@ -4,11 +4,13 @@ import (
 	"errors"
 	"github.com/spf13/viper"
 	"log"
+	"time"
 )
 
 type Config struct {
 	JWTKey string `env:"JWT_KEY" envDefault:"supersecret"`
 	Logger Logger
+	Server ServerConfig
 }
 
 type Logger struct {
@@ -17,6 +19,21 @@ type Logger struct {
 	DisableStacktrace bool
 	Encoding          string
 	Level             string
+}
+
+type ServerConfig struct {
+	AppVersion        string
+	Port              string
+	PprofPort         string
+	Mode              string
+	JwtSecretKey      string
+	CookieName        string
+	ReadTimeout       time.Duration
+	WriteTimeout      time.Duration
+	SSL               bool
+	CtxDefaultTimeout time.Duration
+	CSRF              bool
+	Debug             bool
 }
 
 type HTTP struct {
